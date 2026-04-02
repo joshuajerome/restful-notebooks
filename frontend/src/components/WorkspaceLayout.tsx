@@ -253,8 +253,8 @@ export default function WorkspaceLayout() {
           : <ListSubheader sx={{ lineHeight: '28px', fontSize: 10, fontWeight: 600, letterSpacing: 1, px: 2.5, bgcolor: 'transparent' }}>WORKSPACE</ListSubheader>
         }
         <List dense disablePadding>
-          {renderNavItem('Endpoints', <Api fontSize="small" />, '/endpoints', !hasActiveWs)}
           {renderNavItem('Notebooks', <AutoStories fontSize="small" />, '/notebooks', !hasActiveWs)}
+          {renderNavItem('Endpoints', <Api fontSize="small" />, '/endpoints', !hasActiveWs)}
         </List>
 
         {/* Activity section */}
