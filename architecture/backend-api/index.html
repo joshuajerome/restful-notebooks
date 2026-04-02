@@ -6,18 +6,18 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="REST workflow automation framework — ingest API endpoint definitions, generate typed Python modules, and orchestrate multi-step REST workflows.
+        <meta name="description" content="Desktop companion app for restful — visual REST workspace management, endpoint browsing, request execution, and workflow orchestration.
 ">
       
       
       
-        <link rel="canonical" href="https://joshuajerome.github.io/restful/concepts/authentication/">
+        <link rel="canonical" href="https://joshuajerome.github.io/restful-notebooks/architecture/backend-api/">
       
       
-        <link rel="prev" href="../workflows/">
+        <link rel="prev" href="../overview/">
       
       
-        <link rel="next" href="../variables/">
+        <link rel="next" href="../frontend/">
       
       
         
@@ -28,7 +28,7 @@
     
     
       
-        <title>Authentication - restful</title>
+        <title>Backend API - Restful Notebooks</title>
       
     
     
@@ -79,7 +79,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#authentication" class="md-skip">
+        <a href="#backend-api" class="md-skip">
           Skip to content
         </a>
       
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="restful" class="md-header__button md-logo" aria-label="restful" data-md-component="logo">
+    <a href="../.." title="Restful Notebooks" class="md-header__button md-logo" aria-label="Restful Notebooks" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -107,13 +107,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            restful
+            Restful Notebooks
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Authentication
+              Backend API
             
           </span>
         </div>
@@ -195,13 +195,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/joshuajerome/restful" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/joshuajerome/restful-notebooks" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    joshuajerome/restful
+    joshuajerome/restful-notebooks
   </div>
 </a>
       </div>
@@ -273,7 +273,7 @@
           
   
   
-  Concepts
+  Architecture
 
         </a>
       </li>
@@ -289,51 +289,11 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../reference/cli/" class="md-tabs__link">
-          
-  
-  
-  Reference
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../guides/writing-a-plugin/" class="md-tabs__link">
+        <a href="../../guides/request-builder/" class="md-tabs__link">
           
   
   
   Guides
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../architecture/design-decisions/" class="md-tabs__link">
-          
-  
-  
-  Architecture
 
         </a>
       </li>
@@ -383,23 +343,23 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="restful" class="md-nav__button md-logo" aria-label="restful" data-md-component="logo">
+    <a href="../.." title="Restful Notebooks" class="md-nav__button md-logo" aria-label="Restful Notebooks" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    restful
+    Restful Notebooks
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/joshuajerome/restful" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/joshuajerome/restful-notebooks" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    joshuajerome/restful
+    joshuajerome/restful-notebooks
   </div>
 </a>
     </div>
@@ -529,35 +489,7 @@
   <span class="md-ellipsis">
     
   
-    Quickstart
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../getting-started/workspace-layout/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Workspace Layout
+    Quick Start
   
 
     
@@ -613,7 +545,7 @@
   <span class="md-ellipsis">
     
   
-    Concepts
+    Architecture
   
 
     
@@ -629,7 +561,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Concepts
+    Architecture
   
 
           </label>
@@ -667,90 +599,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../workspaces/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Workspaces
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../plugins-endpoints/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Plugins & Endpoints
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../workflows/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Workflows
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -770,7 +618,7 @@
   <span class="md-ellipsis">
     
   
-    Authentication
+    Backend API
   
 
     
@@ -788,7 +636,7 @@
   <span class="md-ellipsis">
     
   
-    Authentication
+    Backend API
   
 
     
@@ -816,10 +664,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#bearer-token-auth" class="md-nav__link">
+  <a href="#health" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bearer Token Auth
+        Health
       
     </span>
   </a>
@@ -827,10 +675,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#api-key-auth" class="md-nav__link">
+  <a href="#workspace-apiworkspace" class="md-nav__link">
     <span class="md-ellipsis">
       
-        API Key Auth
+        Workspace (/api/workspace)
       
     </span>
   </a>
@@ -838,10 +686,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#no-auth" class="md-nav__link">
+  <a href="#endpoints-apiendpoints" class="md-nav__link">
     <span class="md-ellipsis">
       
-        No Auth
+        Endpoints (/api/endpoints)
       
     </span>
   </a>
@@ -849,10 +697,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#token-cache" class="md-nav__link">
+  <a href="#requests-apirequests" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Token Cache
+        Requests (/api/requests)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Requests (/api/requests)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#execute-request-body" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execute Request Body
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plugins-apiplugins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plugins (/api/plugins)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflows-apiworkflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workflows (/api/workflows)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling
       
     </span>
   </a>
@@ -875,14 +773,42 @@
   
   
     <li class="md-nav__item">
-      <a href="../variables/" class="md-nav__link">
+      <a href="../frontend/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Variables
+    Frontend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../electron-shell/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Electron Shell
   
 
     
@@ -935,7 +861,7 @@
   <span class="md-ellipsis">
     
   
-    Reference
+    Guides
   
 
     
@@ -951,7 +877,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Reference
+    Guides
   
 
           </label>
@@ -964,14 +890,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/cli/" class="md-nav__link">
+      <a href="../../guides/request-builder/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    CLI
+    Using the Request Builder
   
 
     
@@ -992,14 +918,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/client-api/" class="md-nav__link">
+      <a href="../../guides/workspace-config/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Client API
+    Workspace Configuration
   
 
     
@@ -1020,70 +946,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/endpoint-model/" class="md-nav__link">
+      <a href="../../guides/workflow-editor/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Endpoint Model
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/plugin-adapter/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Plugin Adapter
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/workflow-decorators/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Workflow Decorators
+    Workflow Editor
   
 
     
@@ -1136,7 +1006,7 @@
   <span class="md-ellipsis">
     
   
-    Guides
+    Development
   
 
     
@@ -1149,240 +1019,6 @@
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Guides
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guides/writing-a-plugin/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Writing a Plugin
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guides/writing-workflows/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Writing Workflows
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guides/token-caching/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Token Caching
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Architecture
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Architecture
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/design-decisions/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Design Decisions
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
-        
-          
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Development
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1435,6 +1071,34 @@
     
   
     CI/CD Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/release-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Process
   
 
     
@@ -1540,10 +1204,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#bearer-token-auth" class="md-nav__link">
+  <a href="#health" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bearer Token Auth
+        Health
       
     </span>
   </a>
@@ -1551,10 +1215,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#api-key-auth" class="md-nav__link">
+  <a href="#workspace-apiworkspace" class="md-nav__link">
     <span class="md-ellipsis">
       
-        API Key Auth
+        Workspace (/api/workspace)
       
     </span>
   </a>
@@ -1562,10 +1226,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#no-auth" class="md-nav__link">
+  <a href="#endpoints-apiendpoints" class="md-nav__link">
     <span class="md-ellipsis">
       
-        No Auth
+        Endpoints (/api/endpoints)
       
     </span>
   </a>
@@ -1573,10 +1237,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#token-cache" class="md-nav__link">
+  <a href="#requests-apirequests" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Token Cache
+        Requests (/api/requests)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Requests (/api/requests)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#execute-request-body" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execute Request Body
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plugins-apiplugins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plugins (/api/plugins)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflows-apiworkflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workflows (/api/workflows)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling
       
     </span>
   </a>
@@ -1600,7 +1314,7 @@
 
 
   
-    <a href="https://github.com/joshuajerome/restful/edit/integration/docs/concepts/authentication.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/joshuajerome/restful-notebooks/edit/integration/docs/architecture/backend-api.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1608,53 +1322,191 @@
   
 
 
-<h1 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h1>
-<p>restful supports two authentication strategies, configured per-API in the workspace config.</p>
-<h2 id="bearer-token-auth">Bearer Token Auth<a class="headerlink" href="#bearer-token-auth" title="Permanent link">&para;</a></h2>
-<p>Automatic JWT lifecycle: login, cache, refresh, retry.</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">auth</span><span class="p">:</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bearer</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">login_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/security/v1/auth/login</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">password_env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SFM_PASSWORD</span>
+<h1 id="backend-api">Backend API<a class="headerlink" href="#backend-api" title="Permanent link">&para;</a></h1>
+<p>The FastAPI backend serves as a thin adapter between the React frontend and the restful library.</p>
+<h2 id="health">Health<a class="headerlink" href="#health" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/api/health</code></td>
+<td>Returns status, workspace name, workspace root</td>
+</tr>
+</tbody>
+</table>
+<h2 id="workspace-apiworkspace">Workspace (<code>/api/workspace</code>)<a class="headerlink" href="#workspace-apiworkspace" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/api/workspace</code></td>
+<td>Current workspace info (name, root, APIs)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/workspace/load</code></td>
+<td>Load workspace from filesystem path</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/workspace/variables</code></td>
+<td>List all workspace variables</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/api/workspace/variables/{key}</code></td>
+<td>Set a variable</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/api/workspace/variables/{key}</code></td>
+<td>Delete a variable</td>
+</tr>
+</tbody>
+</table>
+<h2 id="endpoints-apiendpoints">Endpoints (<code>/api/endpoints</code>)<a class="headerlink" href="#endpoints-apiendpoints" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/api/endpoints</code></td>
+<td>List endpoints (supports <code>?search=</code> and <code>?group=</code> filters)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/endpoints/groups</code></td>
+<td>List unique API group names</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/endpoints/{name}</code></td>
+<td>Get single endpoint by name</td>
+</tr>
+</tbody>
+</table>
+<h2 id="requests-apirequests">Requests (<code>/api/requests</code>)<a class="headerlink" href="#requests-apirequests" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/api/requests/execute</code></td>
+<td>Execute an HTTP request via restful Client</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/requests/history</code></td>
+<td>List recent request history (default limit: 50)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/requests/history/{id}</code></td>
+<td>Get full request/response details</td>
+</tr>
+</tbody>
+</table>
+<h3 id="execute-request-body">Execute Request Body<a class="headerlink" href="#execute-request-body" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;method&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GET&quot;</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&quot;endpoint_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BlueprintTemplates&quot;</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">&quot;endpoint_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/redfish/v1/SFM/1/BlueprintTemplates&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">&quot;api_alias&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sfm&quot;</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nt">&quot;query&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nt">&quot;payload&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><strong>How it works:</strong></p>
-<ol>
-<li>On first request, POST to <code>login_path</code> with username/password</li>
-<li>Extract token from response, parse JWT <code>exp</code> claim</li>
-<li>Cache to <code>.restful/cache.json</code> keyed by base URL</li>
-<li>Inject <code>Authorization: Bearer &lt;token&gt;</code> on every request</li>
-<li>If token expires within 60s, auto-refresh before the next request</li>
-<li>On 401 response: invalidate token, re-authenticate, retry once</li>
-</ol>
-<p><strong>Password handling:</strong> The <code>password_env</code> field names an environment variable — passwords are never stored in config files.</p>
-<h2 id="api-key-auth">API Key Auth<a class="headerlink" href="#api-key-auth" title="Permanent link">&para;</a></h2>
-<p>Static key injected as a header:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">auth</span><span class="p">:</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apikey</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">header</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Authorization</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">key_env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NETBOX_API_KEY</span>
-</span></code></pre></div>
-<p>The value of the environment variable named by <code>key_env</code> is sent as the specified header on every request.</p>
-<h2 id="no-auth">No Auth<a class="headerlink" href="#no-auth" title="Permanent link">&para;</a></h2>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">auth</span><span class="p">:</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">none</span>
-</span></code></pre></div>
-<p>Or omit the <code>auth</code> section entirely.</p>
-<h2 id="token-cache">Token Cache<a class="headerlink" href="#token-cache" title="Permanent link">&para;</a></h2>
-<p>Cached tokens are stored in <code>.restful/cache.json</code>:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;https://100.94.115.90&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;token&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;eyJhbG...&quot;</span><span class="p">,</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">&quot;expires_at&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1711500000</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">}</span>
-</span></code></pre></div>
+<h2 id="plugins-apiplugins">Plugins (<code>/api/plugins</code>)<a class="headerlink" href="#plugins-apiplugins" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/api/plugins</code></td>
+<td>List available plugins</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/plugins/load</code></td>
+<td>Parse source and generate endpoints.py</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/plugins/validate</code></td>
+<td>Validate source without generating</td>
+</tr>
+</tbody>
+</table>
+<h2 id="workflows-apiworkflows">Workflows (<code>/api/workflows</code>)<a class="headerlink" href="#workflows-apiworkflows" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/api/workflows</code></td>
+<td>List workflow files in <code>workflows/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/api/workflows/{name}/stages</code></td>
+<td>List stages in a workflow</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/workflows/{name}/run</code></td>
+<td>Run all stages</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/workflows/{name}/run-stage</code></td>
+<td>Run a single stage</td>
+</tr>
+</tbody>
+</table>
+<h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Keyed by base URL — multiple APIs each get their own entry</li>
-<li>File permissions are 0600 (owner-only)</li>
-<li>Atomic writes using temp file + rename</li>
-<li>Never logged or printed</li>
+<li><strong>503</strong> — No workspace loaded (returned by the <code>get_ws</code> dependency)</li>
+<li><strong>404</strong> — Endpoint or workflow not found</li>
+<li><strong>500</strong> — Unexpected error (logged, returned with error detail)</li>
 </ul>
 
 

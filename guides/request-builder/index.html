@@ -6,18 +6,18 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="REST workflow automation framework — ingest API endpoint definitions, generate typed Python modules, and orchestrate multi-step REST workflows.
+        <meta name="description" content="Desktop companion app for restful — visual REST workspace management, endpoint browsing, request execution, and workflow orchestration.
 ">
       
       
       
-        <link rel="canonical" href="https://joshuajerome.github.io/restful/guides/writing-workflows/">
+        <link rel="canonical" href="https://joshuajerome.github.io/restful-notebooks/guides/request-builder/">
       
       
-        <link rel="prev" href="../writing-a-plugin/">
+        <link rel="prev" href="../../architecture/electron-shell/">
       
       
-        <link rel="next" href="../token-caching/">
+        <link rel="next" href="../workspace-config/">
       
       
         
@@ -28,7 +28,7 @@
     
     
       
-        <title>Writing Workflows - restful</title>
+        <title>Using the Request Builder - Restful Notebooks</title>
       
     
     
@@ -79,7 +79,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#writing-workflows" class="md-skip">
+        <a href="#using-the-request-builder" class="md-skip">
           Skip to content
         </a>
       
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="restful" class="md-header__button md-logo" aria-label="restful" data-md-component="logo">
+    <a href="../.." title="Restful Notebooks" class="md-header__button md-logo" aria-label="Restful Notebooks" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -107,13 +107,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            restful
+            Restful Notebooks
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Writing Workflows
+              Using the Request Builder
             
           </span>
         </div>
@@ -195,13 +195,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/joshuajerome/restful" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/joshuajerome/restful-notebooks" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    joshuajerome/restful
+    joshuajerome/restful-notebooks
   </div>
 </a>
       </div>
@@ -267,31 +267,11 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../concepts/overview/" class="md-tabs__link">
+        <a href="../../architecture/overview/" class="md-tabs__link">
           
   
   
-  Concepts
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../reference/cli/" class="md-tabs__link">
-          
-  
-  
-  Reference
+  Architecture
 
         </a>
       </li>
@@ -309,31 +289,11 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../writing-a-plugin/" class="md-tabs__link">
+        <a href="./" class="md-tabs__link">
           
   
   
   Guides
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../architecture/design-decisions/" class="md-tabs__link">
-          
-  
-  
-  Architecture
 
         </a>
       </li>
@@ -383,23 +343,23 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="restful" class="md-nav__button md-logo" aria-label="restful" data-md-component="logo">
+    <a href="../.." title="Restful Notebooks" class="md-nav__button md-logo" aria-label="Restful Notebooks" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    restful
+    Restful Notebooks
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/joshuajerome/restful" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/joshuajerome/restful-notebooks" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    joshuajerome/restful
+    joshuajerome/restful-notebooks
   </div>
 </a>
     </div>
@@ -529,35 +489,7 @@
   <span class="md-ellipsis">
     
   
-    Quickstart
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../getting-started/workspace-layout/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Workspace Layout
+    Quick Start
   
 
     
@@ -610,7 +542,7 @@
   <span class="md-ellipsis">
     
   
-    Concepts
+    Architecture
   
 
     
@@ -626,7 +558,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Concepts
+    Architecture
   
 
           </label>
@@ -639,7 +571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/overview/" class="md-nav__link">
+      <a href="../../architecture/overview/" class="md-nav__link">
         
   
   
@@ -667,14 +599,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/workspaces/" class="md-nav__link">
+      <a href="../../architecture/backend-api/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Workspaces
+    Backend API
   
 
     
@@ -695,14 +627,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/plugins-endpoints/" class="md-nav__link">
+      <a href="../../architecture/frontend/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Plugins & Endpoints
+    Frontend
   
 
     
@@ -723,271 +655,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/workflows/" class="md-nav__link">
+      <a href="../../architecture/electron-shell/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Workflows
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../concepts/authentication/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Authentication
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../concepts/variables/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Variables
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Reference
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Reference
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/cli/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CLI
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/client-api/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Client API
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/endpoint-model/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Endpoint Model
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/plugin-adapter/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Plugin Adapter
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/workflow-decorators/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Workflow Decorators
+    Electron Shell
   
 
     
@@ -1033,10 +708,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -1054,8 +729,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1064,34 +739,6 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../writing-a-plugin/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Writing a Plugin
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -1116,7 +763,7 @@
   <span class="md-ellipsis">
     
   
-    Writing Workflows
+    Using the Request Builder
   
 
     
@@ -1134,7 +781,7 @@
   <span class="md-ellipsis">
     
   
-    Writing Workflows
+    Using the Request Builder
   
 
     
@@ -1162,10 +809,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#basic-structure" class="md-nav__link">
+  <a href="#selecting-an-endpoint" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic Structure
+        Selecting an Endpoint
       
     </span>
   </a>
@@ -1173,43 +820,99 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#passing-data-between-stages" class="md-nav__link">
+  <a href="#parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Passing Data Between Stages
+        Parameters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#params-tab-odata-key-predicates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Params Tab (OData Key Predicates)
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#using-multiple-apis" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#query-tab" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Using Multiple APIs
+        Query Tab
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#running" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#payload-tab" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Running
+        Payload Tab
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#tips" class="md-nav__link">
+  <a href="#response-viewer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tips
+        Response Viewer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Response Viewer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#context-menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context Menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hover-highlighting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hover Highlighting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#url-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        URL Preview
       
     </span>
   </a>
@@ -1232,14 +935,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../token-caching/" class="md-nav__link">
+      <a href="../workspace-config/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Token Caching
+    Workspace Configuration
   
 
     
@@ -1252,67 +955,6 @@
   
 
               
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Architecture
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Architecture
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
             
               
                 
@@ -1321,14 +963,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architecture/design-decisions/" class="md-nav__link">
+      <a href="../workflow-editor/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Design Decisions
+    Workflow Editor
   
 
     
@@ -1371,10 +1013,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -1392,8 +1034,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1446,6 +1088,34 @@
     
   
     CI/CD Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/release-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Process
   
 
     
@@ -1551,10 +1221,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#basic-structure" class="md-nav__link">
+  <a href="#selecting-an-endpoint" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic Structure
+        Selecting an Endpoint
       
     </span>
   </a>
@@ -1562,43 +1232,99 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#passing-data-between-stages" class="md-nav__link">
+  <a href="#parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Passing Data Between Stages
+        Parameters
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#params-tab-odata-key-predicates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Params Tab (OData Key Predicates)
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#using-multiple-apis" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#query-tab" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Using Multiple APIs
+        Query Tab
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#running" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#payload-tab" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Running
+        Payload Tab
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#tips" class="md-nav__link">
+  <a href="#response-viewer" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Tips
+        Response Viewer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Response Viewer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#context-menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context Menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hover-highlighting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hover Highlighting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#url-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        URL Preview
       
     </span>
   </a>
@@ -1622,7 +1348,7 @@
 
 
   
-    <a href="https://github.com/joshuajerome/restful/edit/integration/docs/guides/writing-workflows.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/joshuajerome/restful-notebooks/edit/integration/docs/guides/request-builder.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1630,64 +1356,48 @@
   
 
 
-<h1 id="writing-workflows">Writing Workflows<a class="headerlink" href="#writing-workflows" title="Permanent link">&para;</a></h1>
-<p>Workflows are Python scripts in the <code>workflows/</code> directory with <code>@stage</code>-decorated functions.</p>
-<h2 id="basic-structure">Basic Structure<a class="headerlink" href="#basic-structure" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># workflows/my_flow.py</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">restful</span><span class="w"> </span><span class="kn">import</span> <span class="n">stage</span><span class="p">,</span> <span class="n">WorkflowContext</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nd">@stage</span><span class="p">(</span><span class="s2">&quot;Step 1 — Fetch&quot;</span><span class="p">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">WorkflowContext</span><span class="p">):</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">response</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">clients</span><span class="o">.</span><span class="n">sfm</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">instance_rest</span><span class="o">.</span><span class="n">BlueprintTemplates</span><span class="p">)</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">templates</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;BlueprintTemplate&quot;</span><span class="p">]</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;template_count&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">templates</span><span class="p">)))</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="nd">@stage</span><span class="p">(</span><span class="s2">&quot;Step 2 — Process&quot;</span><span class="p">)</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">WorkflowContext</span><span class="p">):</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;template_count&quot;</span><span class="p">))</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>        <span class="c1"># Create infrastructure</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">clients</span><span class="o">.</span><span class="n">sfm</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">instance_rest</span><span class="o">.</span><span class="n">Infrastructures</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="p">{</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>            <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;auto-infra-</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>        <span class="p">})</span>
-</span></code></pre></div>
-<h2 id="passing-data-between-stages">Passing Data Between Stages<a class="headerlink" href="#passing-data-between-stages" title="Permanent link">&para;</a></h2>
-<p>Use <code>ctx.set()</code> and <code>ctx.get()</code> to pass data:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@stage</span><span class="p">(</span><span class="s2">&quot;Extract&quot;</span><span class="p">)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">WorkflowContext</span><span class="p">):</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">response</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">clients</span><span class="o">.</span><span class="n">sfm</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="p">)</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;infra_id&quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;Id&quot;</span><span class="p">])</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="nd">@stage</span><span class="p">(</span><span class="s2">&quot;Use&quot;</span><span class="p">)</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">use</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">WorkflowContext</span><span class="p">):</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">infra_id</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;infra_id&quot;</span><span class="p">)</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">ctx</span><span class="o">.</span><span class="n">clients</span><span class="o">.</span><span class="n">sfm</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">InfraDetails</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">infra_id</span><span class="p">})</span>
-</span></code></pre></div>
-<p>All variable values are strings. Variables persist to <code>.restful/variables.json</code> after the workflow completes.</p>
-<h2 id="using-multiple-apis">Using Multiple APIs<a class="headerlink" href="#using-multiple-apis" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@stage</span><span class="p">(</span><span class="s2">&quot;Cross-API operation&quot;</span><span class="p">)</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">cross_api</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span> <span class="n">WorkflowContext</span><span class="p">):</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="c1"># SFM API</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">nodes</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">clients</span><span class="o">.</span><span class="n">sfm</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Nodes</span><span class="p">)</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="c1"># Netbox API</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">devices</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">clients</span><span class="o">.</span><span class="n">netbox</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Devices</span><span class="p">)</span>
-</span></code></pre></div>
-<p>Each API configured in the workspace config is available as <code>ctx.clients.&lt;alias&gt;</code>.</p>
-<h2 id="running">Running<a class="headerlink" href="#running" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># All stages sequentially</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>python<span class="w"> </span>-m<span class="w"> </span>restful<span class="w"> </span>workflow<span class="w"> </span>run<span class="w"> </span>my_flow
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Single stage (useful for development)</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>python<span class="w"> </span>-m<span class="w"> </span>restful<span class="w"> </span>workflow<span class="w"> </span>run<span class="w"> </span>my_flow<span class="w"> </span>--stage<span class="w"> </span><span class="s2">&quot;Step 1 — Fetch&quot;</span>
-</span></code></pre></div>
-<h2 id="tips">Tips<a class="headerlink" href="#tips" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Keep stages focused — one API operation per stage</li>
-<li>Use descriptive stage names that read as steps in a process</li>
-<li>Set variables for any data you need across stages</li>
-<li>Stages run in decorator order, top to bottom</li>
-</ul>
+<h1 id="using-the-request-builder">Using the Request Builder<a class="headerlink" href="#using-the-request-builder" title="Permanent link">&para;</a></h1>
+<p>The Request Builder is the primary interface for making REST API calls.</p>
+<h2 id="selecting-an-endpoint">Selecting an Endpoint<a class="headerlink" href="#selecting-an-endpoint" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Choose a method from the dropdown (GET, POST, PUT, DELETE)</li>
+<li>Start typing in the endpoint autocomplete field</li>
+<li>Results filter by name, display name, and path</li>
+<li>Endpoints that don't support the selected method are grayed out</li>
+<li>If an endpoint has only one method, it auto-selects when you choose the endpoint</li>
+</ol>
+<h2 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h2>
+<h3 id="params-tab-odata-key-predicates">Params Tab (OData Key Predicates)<a class="headerlink" href="#params-tab-odata-key-predicates" title="Permanent link">&para;</a></h3>
+<p>For endpoints with path parameters like <code>/Nodes({id},{namespace})</code>:</p>
+<p>Enter values as key-value pairs:
+- <code>id</code> = <code>abc</code>
+- <code>namespace</code> = <code>prod</code></p>
+<p>Result: <code>/Nodes(abc,prod)</code></p>
+<h3 id="query-tab">Query Tab<a class="headerlink" href="#query-tab" title="Permanent link">&para;</a></h3>
+<p>URL query string parameters. Enter as key-value pairs:
+- <code>limit</code> = <code>10</code>
+- <code>offset</code> = <code>0</code></p>
+<p>Result: <code>?limit=10&amp;offset=0</code></p>
+<h3 id="payload-tab">Payload Tab<a class="headerlink" href="#payload-tab" title="Permanent link">&para;</a></h3>
+<p>JSON request body for POST/PUT/DELETE requests. The editor provides:
+- Syntax highlighting
+- Auto-indent on Enter
+- Tab inserts 4 spaces
+- Closing brace auto-completion</p>
+<h2 id="response-viewer">Response Viewer<a class="headerlink" href="#response-viewer" title="Permanent link">&para;</a></h2>
+<p>The response panel shows:
+- <strong>Status chip</strong> — color-coded by status code range
+- <strong>Duration</strong> — request time in milliseconds
+- <strong>JSON body</strong> — syntax-highlighted with VS Code dark theme colors</p>
+<h3 id="context-menu">Context Menu<a class="headerlink" href="#context-menu" title="Permanent link">&para;</a></h3>
+<p>Right-click any value in the response to:
+- <strong>Copy value</strong> — copies the raw value
+- <strong>Copy reference</strong> — copies the path (e.g., <code>response["items"][0]["id"]</code>)
+- <strong>Save to variables</strong> — saves the value as a workspace variable</p>
+<h3 id="hover-highlighting">Hover Highlighting<a class="headerlink" href="#hover-highlighting" title="Permanent link">&para;</a></h3>
+<p>Hover over objects or arrays to see their boundaries highlighted.</p>
+<h2 id="url-preview">URL Preview<a class="headerlink" href="#url-preview" title="Permanent link">&para;</a></h2>
+<p>The collapsible preview panel at the bottom shows the fully constructed URL with base URL, path, params, and query string.</p>
 
 
 

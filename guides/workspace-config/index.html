@@ -6,18 +6,18 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="REST workflow automation framework — ingest API endpoint definitions, generate typed Python modules, and orchestrate multi-step REST workflows.
+        <meta name="description" content="Desktop companion app for restful — visual REST workspace management, endpoint browsing, request execution, and workflow orchestration.
 ">
       
       
       
-        <link rel="canonical" href="https://joshuajerome.github.io/restful/reference/workflow-decorators/">
+        <link rel="canonical" href="https://joshuajerome.github.io/restful-notebooks/guides/workspace-config/">
       
       
-        <link rel="prev" href="../plugin-adapter/">
+        <link rel="prev" href="../request-builder/">
       
       
-        <link rel="next" href="../../guides/writing-a-plugin/">
+        <link rel="next" href="../workflow-editor/">
       
       
         
@@ -28,7 +28,7 @@
     
     
       
-        <title>Workflow Decorators - restful</title>
+        <title>Workspace Configuration - Restful Notebooks</title>
       
     
     
@@ -79,7 +79,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#workflow-decorators" class="md-skip">
+        <a href="#workspace-configuration" class="md-skip">
           Skip to content
         </a>
       
@@ -93,7 +93,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="restful" class="md-header__button md-logo" aria-label="restful" data-md-component="logo">
+    <a href="../.." title="Restful Notebooks" class="md-header__button md-logo" aria-label="Restful Notebooks" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -107,13 +107,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            restful
+            Restful Notebooks
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Workflow Decorators
+              Workspace Configuration
             
           </span>
         </div>
@@ -195,13 +195,13 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/joshuajerome/restful" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/joshuajerome/restful-notebooks" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    joshuajerome/restful
+    joshuajerome/restful-notebooks
   </div>
 </a>
       </div>
@@ -267,11 +267,11 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../concepts/overview/" class="md-tabs__link">
+        <a href="../../architecture/overview/" class="md-tabs__link">
           
   
   
-  Concepts
+  Architecture
 
         </a>
       </li>
@@ -289,51 +289,11 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../cli/" class="md-tabs__link">
-          
-  
-  
-  Reference
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../guides/writing-a-plugin/" class="md-tabs__link">
+        <a href="../request-builder/" class="md-tabs__link">
           
   
   
   Guides
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../architecture/design-decisions/" class="md-tabs__link">
-          
-  
-  
-  Architecture
 
         </a>
       </li>
@@ -383,23 +343,23 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="restful" class="md-nav__button md-logo" aria-label="restful" data-md-component="logo">
+    <a href="../.." title="Restful Notebooks" class="md-nav__button md-logo" aria-label="Restful Notebooks" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    restful
+    Restful Notebooks
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/joshuajerome/restful" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/joshuajerome/restful-notebooks" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
-    joshuajerome/restful
+    joshuajerome/restful-notebooks
   </div>
 </a>
     </div>
@@ -529,35 +489,7 @@
   <span class="md-ellipsis">
     
   
-    Quickstart
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../getting-started/workspace-layout/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Workspace Layout
+    Quick Start
   
 
     
@@ -610,7 +542,7 @@
   <span class="md-ellipsis">
     
   
-    Concepts
+    Architecture
   
 
     
@@ -626,7 +558,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Concepts
+    Architecture
   
 
           </label>
@@ -639,7 +571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/overview/" class="md-nav__link">
+      <a href="../../architecture/overview/" class="md-nav__link">
         
   
   
@@ -667,14 +599,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/workspaces/" class="md-nav__link">
+      <a href="../../architecture/backend-api/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Workspaces
+    Backend API
   
 
     
@@ -695,14 +627,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/plugins-endpoints/" class="md-nav__link">
+      <a href="../../architecture/frontend/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Plugins & Endpoints
+    Frontend
   
 
     
@@ -723,70 +655,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../concepts/workflows/" class="md-nav__link">
+      <a href="../../architecture/electron-shell/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Workflows
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../concepts/authentication/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Authentication
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../concepts/variables/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Variables
+    Electron Shell
   
 
     
@@ -842,7 +718,7 @@
   <span class="md-ellipsis">
     
   
-    Reference
+    Guides
   
 
     
@@ -858,7 +734,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Reference
+    Guides
   
 
           </label>
@@ -871,98 +747,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../cli/" class="md-nav__link">
+      <a href="../request-builder/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    CLI
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../client-api/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Client API
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../endpoint-model/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Endpoint Model
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../plugin-adapter/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Plugin Adapter
+    Using the Request Builder
   
 
     
@@ -999,7 +791,7 @@
   <span class="md-ellipsis">
     
   
-    Workflow Decorators
+    Workspace Configuration
   
 
     
@@ -1017,7 +809,7 @@
   <span class="md-ellipsis">
     
   
-    Workflow Decorators
+    Workspace Configuration
   
 
     
@@ -1045,10 +837,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#stage" class="md-nav__link">
+  <a href="#layout" class="md-nav__link">
     <span class="md-ellipsis">
       
-        @stage
+        Layout
       
     </span>
   </a>
@@ -1056,22 +848,44 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#workflowcontext" class="md-nav__link">
+  <a href="#general-settings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        WorkflowContext
+        General Settings
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="WorkflowContext">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Management">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#building-from-workspace" class="md-nav__link">
+  <a href="#bearer-auth-fields" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Building from Workspace
+        Bearer Auth Fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-key-auth-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Key Auth Fields
       
     </span>
   </a>
@@ -1084,10 +898,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stageresult" class="md-nav__link">
+  <a href="#variables" class="md-nav__link">
     <span class="md-ellipsis">
       
-        StageResult
+        Variables
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modified-indicator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modified Indicator
       
     </span>
   </a>
@@ -1098,6 +923,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow-editor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflow Editor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1142,7 +995,7 @@
   <span class="md-ellipsis">
     
   
-    Guides
+    Development
   
 
     
@@ -1155,240 +1008,6 @@
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Guides
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guides/writing-a-plugin/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Writing a Plugin
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guides/writing-workflows/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Writing Workflows
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../guides/token-caching/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Token Caching
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Architecture
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Architecture
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../architecture/design-decisions/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Design Decisions
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
-        
-          
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Development
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1441,6 +1060,34 @@
     
   
     CI/CD Workflows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/release-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Process
   
 
     
@@ -1546,10 +1193,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#stage" class="md-nav__link">
+  <a href="#layout" class="md-nav__link">
     <span class="md-ellipsis">
       
-        @stage
+        Layout
       
     </span>
   </a>
@@ -1557,22 +1204,44 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#workflowcontext" class="md-nav__link">
+  <a href="#general-settings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        WorkflowContext
+        General Settings
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="WorkflowContext">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Management">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#building-from-workspace" class="md-nav__link">
+  <a href="#bearer-auth-fields" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Building from Workspace
+        Bearer Auth Fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-key-auth-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Key Auth Fields
       
     </span>
   </a>
@@ -1585,10 +1254,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stageresult" class="md-nav__link">
+  <a href="#variables" class="md-nav__link">
     <span class="md-ellipsis">
       
-        StageResult
+        Variables
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modified-indicator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modified Indicator
       
     </span>
   </a>
@@ -1612,7 +1292,7 @@
 
 
   
-    <a href="https://github.com/joshuajerome/restful/edit/integration/docs/reference/workflow-decorators.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/joshuajerome/restful-notebooks/edit/integration/docs/guides/workspace-config.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1620,97 +1300,64 @@
   
 
 
-<h1 id="workflow-decorators">Workflow Decorators<a class="headerlink" href="#workflow-decorators" title="Permanent link">&para;</a></h1>
-<h2 id="stage">@stage<a class="headerlink" href="#stage" title="Permanent link">&para;</a></h2>
-<p>Registers a function as a named workflow stage.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">restful</span><span class="w"> </span><span class="kn">import</span> <span class="n">stage</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nd">@stage</span><span class="p">(</span><span class="s2">&quot;Fetch data&quot;</span><span class="p">)</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">fetch_data</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="o">...</span>
-</span></code></pre></div>
-<p><strong>Signature:</strong> <code>stage(name: str) -&gt; Callable</code></p>
+<h1 id="workspace-configuration">Workspace Configuration<a class="headerlink" href="#workspace-configuration" title="Permanent link">&para;</a></h1>
+<p>The Workspaces page provides a form-based interface for managing workspace settings.</p>
+<h2 id="layout">Layout<a class="headerlink" href="#layout" title="Permanent link">&para;</a></h2>
+<p>Split view:
+- <strong>Left panel</strong> — list of all workspaces, with active indicator
+- <strong>Right panel</strong> — configuration for the selected workspace</p>
+<h2 id="general-settings">General Settings<a class="headerlink" href="#general-settings" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Attaches <code>_stage_name</code> and <code>_stage_order</code> attributes to the function</li>
-<li>Registers the function in a global stage registry</li>
-<li>Functions work identically with or without the decorator</li>
+<li><strong>Name</strong> — workspace display name</li>
+<li><strong>Color</strong> — accent color (8 preset options: blue, green, orange, red, teal, purple, pink, gray)</li>
 </ul>
-<h2 id="workflowcontext">WorkflowContext<a class="headerlink" href="#workflowcontext" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">restful</span><span class="w"> </span><span class="kn">import</span> <span class="n">WorkflowContext</span>
-</span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>Method</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>ctx.clients.&lt;alias&gt;</code></td>
-<td>Access pre-configured Client by API alias</td>
-</tr>
-<tr>
-<td><code>ctx.get(key)</code></td>
-<td>Read a variable (returns <code>None</code> if missing)</td>
-</tr>
-<tr>
-<td><code>ctx.set(key, value)</code></td>
-<td>Set a variable (string value)</td>
-</tr>
-<tr>
-<td><code>ctx.all_vars()</code></td>
-<td>Return all variables as <code>dict[str, str]</code></td>
-</tr>
-</tbody>
-</table>
-<h3 id="building-from-workspace">Building from Workspace<a class="headerlink" href="#building-from-workspace" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">ctx</span> <span class="o">=</span> <span class="n">WorkflowContext</span><span class="o">.</span><span class="n">from_workspace</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-</span></code></pre></div>
-<p>Builds a <code>ClientNamespace</code> with one Client per API in the workspace config, plus a <code>VariableStore</code> loaded from <code>.restful/variables.json</code>.</p>
-<h2 id="stageresult">StageResult<a class="headerlink" href="#stageresult" title="Permanent link">&para;</a></h2>
-<p>Returned by <code>WorkflowRunner.run()</code> and <code>run_stage()</code>:</p>
+<h2 id="api-management">API Management<a class="headerlink" href="#api-management" title="Permanent link">&para;</a></h2>
+<p>Each workspace can have multiple API connections. For each API:</p>
 <table>
 <thead>
 <tr>
 <th>Field</th>
-<th>Type</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>stage_name</code></td>
-<td><code>str</code></td>
-<td>Name of the stage</td>
+<td>Name</td>
+<td>Display name (e.g., "SFM Instance REST")</td>
 </tr>
 <tr>
-<td><code>success</code></td>
-<td><code>bool</code></td>
-<td>Whether the stage completed without error</td>
+<td>Alias</td>
+<td>Python identifier for <code>ctx.clients.&lt;alias&gt;</code></td>
 </tr>
 <tr>
-<td><code>return_value</code></td>
-<td><code>Any</code></td>
-<td>Return value from the stage function</td>
+<td>Plugin</td>
+<td>Adapter name for endpoint parsing</td>
 </tr>
 <tr>
-<td><code>error</code></td>
-<td><code>str \| None</code></td>
-<td>Error message if failed</td>
+<td>Base URL</td>
+<td>API base URL</td>
 </tr>
 <tr>
-<td><code>duration_ms</code></td>
-<td><code>int</code></td>
-<td>Execution time in milliseconds</td>
-</tr>
-<tr>
-<td><code>captured_vars</code></td>
-<td><code>dict[str, str]</code></td>
-<td>Variables set during this stage</td>
+<td>Auth Type</td>
+<td>Bearer, API Key, or None</td>
 </tr>
 </tbody>
 </table>
+<h3 id="bearer-auth-fields">Bearer Auth Fields<a class="headerlink" href="#bearer-auth-fields" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Login Path — endpoint for token exchange</li>
+<li>Username — login username</li>
+<li>Password — masked field, stored in workspace config</li>
+</ul>
+<h3 id="api-key-auth-fields">API Key Auth Fields<a class="headerlink" href="#api-key-auth-fields" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Header — HTTP header name (e.g., <code>Authorization</code>)</li>
+<li>Key — masked field</li>
+</ul>
+<h2 id="variables">Variables<a class="headerlink" href="#variables" title="Permanent link">&para;</a></h2>
+<p>Key-value pairs managed through the UI. Add, edit, or delete variables that are persisted via the restful VariableStore.</p>
+<h2 id="modified-indicator">Modified Indicator<a class="headerlink" href="#modified-indicator" title="Permanent link">&para;</a></h2>
+<p>An orange dot appears next to fields that have been changed but not saved. The save button shows the count of modified fields.</p>
 
 
 
