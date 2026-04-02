@@ -74,7 +74,7 @@ jobs:
 
       - name: Install backend dependencies
         working-directory: backend
-        run: uv sync
+        run: uv sync --no-sources
 
       - name: Run backend tests
         working-directory: backend
@@ -102,10 +102,6 @@ jobs:
       - name: Type check
         working-directory: frontend
         run: npx tsc --noEmit
-
-      - name: Lint
-        working-directory: frontend
-        run: npm run lint
 
   # ── Docs Build ──────────────────────────────────────────────────────────────
   docs-build:

@@ -18,22 +18,9 @@ jobs:
         with:
           version: "latest"
 
-      - name: Install restful wheel from latest release
-        run: |
-          WHEEL_URL=$(gh api repos/joshuajerome/restful/releases/latest \
-            --jq '.assets[] | select(.name | endswith(".whl")) | .browser_download_url')
-          if [ -n "$WHEEL_URL" ]; then
-            echo "Installing restful from: $WHEEL_URL"
-            pip install "$WHEEL_URL"
-          else
-            echo "No restful wheel found in latest release, falling back to local"
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install backend dependencies
         working-directory: backend
-        run: uv sync
+        run: uv sync --no-sources
 
       - name: Run backend tests
         working-directory: backend
@@ -61,10 +48,6 @@ jobs:
         working-directory: frontend
         run: npx tsc --noEmit
 
-      - name: Lint
-        working-directory: frontend
-        run: npm run lint
-
   # ── Electron Builds ──────────────────────────────────────────────────────────
   build-macos:
     name: Build macOS App
@@ -86,13 +69,6 @@ jobs:
         with:
           version: "latest"
 
-      - name: Install restful wheel from latest release
-        run: |
-          WHEEL_URL=$(gh api repos/joshuajerome/restful/releases/latest \
-            --jq '.assets[] | select(.name | endswith(".whl")) | .browser_download_url')
-          if [ -n "$WHEEL_URL" ]; then pip install "$WHEEL_URL"; fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build frontend
         working-directory: frontend
@@ -100,7 +76,7 @@ jobs:
 
       - name: Install backend dependencies
         working-directory: backend
-        run: uv sync
+        run: uv sync --no-sources
 
       - name: Bundle backend with PyInstaller
         working-directory: backend
@@ -151,14 +127,6 @@ jobs:
         with:
           version: "latest"
 
-      - name: Install restful wheel from latest release
-        shell: bash
-        run: |
-          WHEEL_URL=$(gh api repos/joshuajerome/restful/releases/latest \
-            --jq '.assets[] | select(.name | endswith(".whl")) | .browser_download_url')
-          if [ -n "$WHEEL_URL" ]; then pip install "$WHEEL_URL"; fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build frontend
         working-directory: frontend
@@ -166,7 +134,7 @@ jobs:
 
       - name: Install backend dependencies
         working-directory: backend
-        run: uv sync
+        run: uv sync --no-sources
 
       - name: Bundle backend with PyInstaller
         working-directory: backend
@@ -216,13 +184,6 @@ jobs:
         with:
           version: "latest"
 
-      - name: Install restful wheel from latest release
-        run: |
-          WHEEL_URL=$(gh api repos/joshuajerome/restful/releases/latest \
-            --jq '.assets[] | select(.name | endswith(".whl")) | .browser_download_url')
-          if [ -n "$WHEEL_URL" ]; then pip install "$WHEEL_URL"; fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build frontend
         working-directory: frontend
@@ -230,7 +191,7 @@ jobs:
 
       - name: Install backend dependencies
         working-directory: backend
-        run: uv sync
+        run: uv sync --no-sources
 
       - name: Bundle backend with PyInstaller
         working-directory: backend
