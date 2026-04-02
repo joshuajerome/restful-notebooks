@@ -191,7 +191,7 @@ export default function WorkspaceLayout() {
             <Chip
               label={active.name}
               size="small"
-              onClick={() => navTo('/workspaces')}
+              onClick={() => navigate(`/app/workspaces/${active.id}`)}
               sx={{
                 ml: 1, bgcolor: 'transparent', border: '1.5px solid',
                 borderColor: active.color, color: active.color,

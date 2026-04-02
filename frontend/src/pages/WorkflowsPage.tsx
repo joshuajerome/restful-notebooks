@@ -268,16 +268,16 @@ export default function WorkflowsPage() {
 
   const handleCreate = () => {
     if (!active) return
-    const wf = create(newName || 'Untitled Workflow', active.id)
+    const wf = create(newName || 'Untitled Notebook', active.id)
     setCreateOpen(false)
     setNewName('')
     setEditing(wf)
-    notify(`Workflow "${wf.name}" created`, 'success')
+    notify(`Notebook "${wf.name}" created`, 'success')
   }
 
   const handleSave = () => {
     saveEditing()
-    notify('Workflow saved', 'success')
+    notify('Notebook saved', 'success')
   }
 
   const runStep = async (stepId: string) => {
@@ -344,7 +344,7 @@ export default function WorkflowsPage() {
       if (step.commented) continue
       await runStep(step.id)
     }
-    notify('Workflow complete', 'success')
+    notify('Notebook complete', 'success')
   }
 
   // Editor view
@@ -464,15 +464,15 @@ export default function WorkflowsPage() {
       </Stack>
 
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-        <Typography variant="h5">Workflows</Typography>
+        <Typography variant="h5">Notebooks</Typography>
         <Button variant="contained" size="small" startIcon={<Add />} disabled={!active}
-          onClick={() => { setNewName(''); setCreateOpen(true) }}>New Workflow</Button>
+          onClick={() => { setNewName(''); setCreateOpen(true) }}>New Notebook</Button>
       </Stack>
 
       {wsWorkflows.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 8 }}>
-          <Typography color="text.secondary" sx={{ mb: 2 }}>No workflows yet</Typography>
-          <Button variant="contained" startIcon={<Add />} disabled={!active} onClick={() => setCreateOpen(true)}>Create Workflow</Button>
+          <Typography color="text.secondary" sx={{ mb: 2 }}>No notebooks yet</Typography>
+          <Button variant="contained" startIcon={<Add />} disabled={!active} onClick={() => setCreateOpen(true)}>Create Notebook</Button>
         </Box>
       ) : (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
@@ -514,7 +514,7 @@ export default function WorkflowsPage() {
       )}
 
       <Dialog open={createOpen} onClose={() => setCreateOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>New Workflow</DialogTitle>
+        <DialogTitle>New Notebook</DialogTitle>
         <DialogContent>
           <TextField size="small" label="Name" placeholder="Create GPU Infrastructure" value={newName} onChange={(e) => setNewName(e.target.value)} fullWidth autoFocus sx={{ mt: 1 }} />
         </DialogContent>

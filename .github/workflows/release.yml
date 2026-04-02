@@ -81,7 +81,7 @@ jobs:
       - name: Bundle backend with PyInstaller
         working-directory: backend
         run: |
-          uv run pyinstaller \
+          uv run --no-sources pyinstaller \
             --name restful-notebooks-server \
             --onedir \
             --noconfirm \
@@ -139,7 +139,7 @@ jobs:
       - name: Bundle backend with PyInstaller
         working-directory: backend
         run: |
-          uv run pyinstaller `
+          uv run --no-sources pyinstaller `
             --name restful-notebooks-server `
             --onedir `
             --noconfirm `
@@ -196,7 +196,7 @@ jobs:
       - name: Bundle backend with PyInstaller
         working-directory: backend
         run: |
-          uv run pyinstaller \
+          uv run --no-sources pyinstaller \
             --name restful-notebooks-server \
             --onedir \
             --noconfirm \
