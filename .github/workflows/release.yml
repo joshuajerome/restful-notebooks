@@ -225,7 +225,9 @@ jobs:
   release:
     name: GitHub Release
     runs-on: ubuntu-latest
-    needs: [backend-tests, frontend-checks, build-macos, build-windows, build-linux]
+    needs: [backend-tests, frontend-checks]
+    # Desktop builds disabled until pyinstaller + electron-builder are properly configured
+    # needs: [backend-tests, frontend-checks, build-macos, build-windows, build-linux]
 
     permissions:
       contents: write
@@ -241,18 +243,10 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Download all build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: release-assets/
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           name: Restful Notebooks ${{ steps.version.outputs.tag }}
           generate_release_notes: true
-          files: |
-            release-assets/restful-notebooks-macos/*
-            release-assets/restful-notebooks-windows/*
             release-assets/restful-notebooks-linux/*
