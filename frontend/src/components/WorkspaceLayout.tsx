@@ -7,7 +7,7 @@ import {
 } from '@mui/material'
 import {
   Api, ArrowBack, ArrowForward, AutoStories, ChevronLeft, ChevronRight, DataObject,
-  DarkMode, ElectricBolt, History, LightMode, Notifications,
+  DarkMode, ElectricBolt, History, LightMode, Monitor, Notifications,
   SettingsBrightness, SwapHoriz, Workspaces as WorkspacesIcon,
   Receipt, Settings,
 } from '@mui/icons-material'
@@ -264,6 +264,7 @@ export default function WorkspaceLayout() {
         <List dense disablePadding sx={{ flex: 1 }}>
           {renderNavItem('History', <History fontSize="small" />, '/history', !hasActiveWs)}
           {renderNavItem('Audit Log', <Receipt fontSize="small" />, '/audit')}
+          {renderNavItem('Observability', <Monitor fontSize="small" />, '/observability')}
         </List>
 
         {/* Settings */}

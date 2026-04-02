@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Box, Chip, IconButton, Stack, Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Tooltip, Typography, Paper,
+  Box, Chip, FormControl, InputLabel, MenuItem, Select, Stack, Table, TableBody, TableCell,
+  TableContainer, TableHead, TableRow, Typography, Paper,
 } from '@mui/material'
-import { Settings } from '@mui/icons-material'
 import api from '../api/client'
 import { useWorkspaceStore } from '../store/workspaceStore'
 import { METHOD_COLORS } from '../constants'
@@ -21,8 +20,12 @@ interface HistoryEntry {
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<HistoryEntry[]>([])
+  // TODO: Backend RequestHistory table doesn't have a workspace_id column,
+  // so filtering by workspace is client-side only and currently a no-op.
+  // Once the backend adds workspace_id, switch to server-side filtering.
+  const [wsFilter, setWsFilter] = useState<string>('all')
   const navigate = useNavigate()
-  const { active } = useWorkspaceStore()
+  const { workspaces } = useWorkspaceStore()
 
   useEffect(() => {
     api.get('/requests/history?limit=100').then((r) => setHistory(r.data))
@@ -30,18 +33,22 @@ export default function HistoryPage() {
 
   return (
     <Box>
-      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 0.5 }}>
-        <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12 }}>
-          workspaces / {active?.name || 'none'}
-        </Typography>
-        <Tooltip title="Configure workspace">
-          <IconButton size="small" onClick={() => navigate('/app/workspaces')} sx={{ color: 'text.secondary' }}>
-            <Settings sx={{ fontSize: 14 }} />
-          </IconButton>
-        </Tooltip>
+      <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+        <Typography variant="h5">Request History</Typography>
+        <FormControl size="small" sx={{ minWidth: 180 }}>
+          <InputLabel>Workspace</InputLabel>
+          <Select
+            value={wsFilter}
+            label="Workspace"
+            onChange={(e) => setWsFilter(e.target.value)}
+          >
+            <MenuItem value="all">All Workspaces</MenuItem>
+            {workspaces.map((ws) => (
+              <MenuItem key={ws.id} value={ws.id}>{ws.name}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Stack>
-
-      <Typography variant="h5" sx={{ mb: 2 }}>Request History</Typography>
 
       <TableContainer component={Paper} variant="outlined">
         <Table size="small">

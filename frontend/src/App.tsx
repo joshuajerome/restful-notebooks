@@ -11,6 +11,7 @@ import RequestBuilderPage from './pages/RequestBuilderPage'
 import HistoryPage from './pages/HistoryPage'
 import NotebooksPage from './pages/WorkflowsPage'
 import AuditLogPage from './pages/AuditLogPage'
+import ObservabilityPage from './pages/ObservabilityPage'
 import SettingsPage from './pages/SettingsPage'
 
 export default function App() {
@@ -40,6 +41,7 @@ export default function App() {
           <Route path="history" element={<HistoryPage />} />
           <Route path="notebooks" element={<NotebooksPage />} />
           <Route path="audit" element={<AuditLogPage />} />
+          <Route path="observability" element={<ObservabilityPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
