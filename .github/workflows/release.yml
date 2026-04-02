@@ -24,7 +24,7 @@ jobs:
 
       - name: Run backend tests
         working-directory: backend
-        run: uv run pytest tests/ -v --tb=short
+        run: uv run --no-sources pytest tests/ -v --tb=short
 
   frontend-checks:
     name: Frontend Lint & Type Check
