@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   Alert, Autocomplete, Box, Breadcrumbs, Button, Card, Chip, Divider, FormControl, IconButton,
@@ -76,6 +76,29 @@ export default function WorkspaceConfigPage() {
   useEffect(() => {
     if (workspace?.id === activeId) fetchVariables()
   }, [workspaceId])
+
+  // Scroll spy — update active section as user scrolls
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const handleScroll = useCallback(() => {
+    const container = scrollContainerRef.current
+    if (!container) return
+    const scrollTop = container.scrollTop + 80 // offset for header
+    for (let i = SECTIONS.length - 1; i >= 0; i--) {
+      const el = document.getElementById(`section-${SECTIONS[i].id}`)
+      if (el && el.offsetTop <= scrollTop) {
+        setActiveSection(SECTIONS[i].id)
+        return
+      }
+    }
+    setActiveSection(SECTIONS[0].id)
+  }, [])
+
+  useEffect(() => {
+    const container = scrollContainerRef.current
+    if (!container) return
+    container.addEventListener('scroll', handleScroll)
+    return () => container.removeEventListener('scroll', handleScroll)
+  }, [handleScroll])
 
   const isDirty = workspace ? (
     draftName !== workspace.name ||
@@ -231,7 +254,7 @@ export default function WorkspaceConfigPage() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Box sx={{ flexGrow: 1, overflow: 'auto', pb: 2 }}>
+      <Box ref={scrollContainerRef} sx={{ flexGrow: 1, overflow: 'auto', pb: 2 }}>
         {/* Breadcrumb */}
         <Box sx={{ maxWidth: 800, mb: 1 }}>
           <Breadcrumbs sx={{ '& .MuiBreadcrumbs-separator': { fontSize: 13, color: 'text.disabled' } }}>

@@ -158,6 +158,14 @@ function createWindow(port) {
       );
     });
 
+  // Fullscreen events
+  mainWindow.on("enter-full-screen", () => {
+    mainWindow.webContents.send("fullscreen-changed", true);
+  });
+  mainWindow.on("leave-full-screen", () => {
+    mainWindow.webContents.send("fullscreen-changed", false);
+  });
+
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
@@ -182,12 +190,55 @@ ipcMain.handle("select-file", async (_, filters) => {
 
 ipcMain.handle("get-version", () => app.getVersion());
 ipcMain.handle("is-dev", () => IS_DEV);
+ipcMain.handle("install-update", () => {
+  if (!IS_DEV) {
+    const { autoUpdater } = require("electron-updater");
+    autoUpdater.quitAndInstall();
+  }
+});
+ipcMain.handle("check-for-updates", () => {
+  if (!IS_DEV) {
+    const { autoUpdater } = require("electron-updater");
+    autoUpdater.checkForUpdates();
+  }
+});
+
+// ─── Auto Updater ──────────────────────────────────────────────────────
+
+function setupAutoUpdater() {
+  if (IS_DEV) return;
+
+  try {
+    const { autoUpdater } = require("electron-updater");
+    autoUpdater.autoDownload = true;
+    autoUpdater.autoInstallOnAppQuit = true;
+
+    autoUpdater.on("update-available", (info) => {
+      console.log("[updater] Update available:", info.version);
+      if (mainWindow) mainWindow.webContents.send("update-available", info);
+    });
+
+    autoUpdater.on("update-downloaded", () => {
+      console.log("[updater] Update downloaded, ready to install");
+      if (mainWindow) mainWindow.webContents.send("update-downloaded");
+    });
+
+    autoUpdater.on("error", (err) => {
+      console.error("[updater] Error:", err.message);
+    });
+
+    autoUpdater.checkForUpdatesAndNotify();
+  } catch (err) {
+    console.log("[updater] Not available:", err.message);
+  }
+}
 
 // ─── App Lifecycle ──────────────────────────────────────────────────────
 
 app.whenReady().then(async () => {
   const port = await startBackend();
   createWindow(port);
+  setupAutoUpdater();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {

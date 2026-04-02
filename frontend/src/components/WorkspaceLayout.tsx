@@ -38,9 +38,30 @@ export default function WorkspaceLayout() {
 
   const [backendConnected, setBackendConnected] = useState(false)
   const [backendWorkspace, setBackendWorkspace] = useState<string | null>(null)
+  const [isDev, setIsDev] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [updateAvailable, setUpdateAvailable] = useState<string | null>(null)
+  const [updateReady, setUpdateReady] = useState(false)
 
   useAuditIntegration()
   useEffect(() => { load() }, [])
+
+  // Detect dev mode + fullscreen
+  useEffect(() => {
+    const api = (window as any).electronAPI
+    if (api?.isDev) api.isDev().then((d: boolean) => setIsDev(d)).catch(() => {})
+    else setIsDev(window.location.port === '3000' || window.location.hostname === 'localhost')
+
+    if (api?.onFullscreenChange) {
+      api.onFullscreenChange((fs: boolean) => setIsFullscreen(fs))
+    }
+    if (api?.onUpdateAvailable) {
+      api.onUpdateAvailable((info: any) => setUpdateAvailable(info?.version || 'new'))
+    }
+    if (api?.onUpdateDownloaded) {
+      api.onUpdateDownloaded(() => setUpdateReady(true))
+    }
+  }, [])
   useEffect(() => { push(location.pathname) }, [location.pathname])
 
   // Sync active workspace to backend whenever it changes
@@ -96,9 +117,21 @@ export default function WorkspaceLayout() {
     navigate('/app/request')
   }
 
-  const handleSwitchWorkspace = (ws: Workspace) => {
+  const handleSwitchWorkspace = async (ws: Workspace) => {
     setActive(ws.id)
     setWsSwitcherAnchor(null)
+    // Sync immediately — don't wait for the useEffect
+    try {
+      if (ws.path) {
+        await fetch('/api/workspace/load', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: ws.path }),
+        })
+      } else {
+        await fetch('/api/workspace/unload', { method: 'POST' })
+      }
+    } catch { /* backend unavailable */ }
+    window.dispatchEvent(new Event('workspace-synced'))
   }
 
   const isActive = (path: string) => location.pathname === `/app${path}` || location.pathname.startsWith(`/app${path}/`)
@@ -136,7 +169,7 @@ export default function WorkspaceLayout() {
         sx={{ zIndex: (t) => t.zIndex.drawer + 2, bgcolor: '#000', borderBottom: 1, borderColor: 'divider', height: 56, WebkitAppRegion: 'drag' }}>
         <Toolbar sx={{
           minHeight: '56px !important', height: 56, gap: 0.5,
-          pl: isMac ? '80px !important' : '24px !important',
+          pl: (isMac && !isFullscreen) ? '80px !important' : '24px !important',
           pr: isWindows ? '140px !important' : '16px !important',
         }}>
           <Box onClick={() => navTo('/workspaces')} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', mr: 1, WebkitAppRegion: 'no-drag' }}>
@@ -292,13 +325,28 @@ export default function WorkspaceLayout() {
           px: 2, borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper',
         }}>
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>
-            {active ? active.name : 'no workspace'} — restful v0.1.0 — Restful Notebooks v0.1.0{window.location.port === '3000' ? ' DEV' : ''}
+            {active ? active.name : 'no workspace'} — restful v0.0.1 — Restful Notebooks v0.0.1{isDev ? ' DEV' : ''}
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: backendConnected ? 'success.main' : 'error.main' }} />
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>
-              {backendConnected ? `Backend connected${backendWorkspace ? ` (${backendWorkspace})` : ''}` : 'Backend disconnected'}
-            </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            {updateAvailable && (
+              <Tooltip title={updateReady ? 'Click to install and restart' : `v${updateAvailable} downloading...`}>
+                <Button size="small" onClick={() => updateReady && (window as any).electronAPI?.installUpdate()}
+                  sx={{ fontSize: 10, py: 0, px: 0.75, minHeight: 18, minWidth: 'auto',
+                    color: updateReady ? 'success.main' : 'warning.main',
+                    borderColor: updateReady ? 'success.main' : 'warning.main',
+                  }}
+                  variant="outlined"
+                >
+                  {updateReady ? 'Install Update' : `v${updateAvailable} ↓`}
+                </Button>
+              </Tooltip>
+            )}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: backendConnected ? 'success.main' : 'error.main' }} />
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>
+                {backendConnected ? `Backend connected${backendWorkspace ? ` (${backendWorkspace})` : ''}` : 'Backend disconnected'}
+              </Typography>
+            </Box>
           </Box>
         </Box>
       </Box>
