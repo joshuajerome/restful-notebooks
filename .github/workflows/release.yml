@@ -52,6 +52,7 @@ jobs:
   build-macos:
     name: Build macOS App
     runs-on: macos-latest
+    if: false
     needs: [backend-tests, frontend-checks]
 
     steps:
@@ -110,6 +111,7 @@ jobs:
   build-windows:
     name: Build Windows App
     runs-on: windows-latest
+    if: false
     needs: [backend-tests, frontend-checks]
 
     steps:
@@ -167,6 +169,7 @@ jobs:
   build-linux:
     name: Build Linux App
     runs-on: ubuntu-latest
+    if: false
     needs: [backend-tests, frontend-checks]
 
     steps:
