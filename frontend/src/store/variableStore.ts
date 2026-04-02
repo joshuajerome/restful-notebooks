@@ -2,35 +2,46 @@ import { create } from 'zustand'
 import api from '../api/client'
 
 export interface Variable {
-  id: string
-  name: string
+  key: string
   value: string
-  source: string
-  json_path: string
-  created_at: string
 }
 
 interface VariableStore {
   variables: Variable[]
   fetchVariables: () => Promise<void>
-  saveVariable: (name: string, value: string, source: string, jsonPath: string) => Promise<void>
-  deleteVariable: (id: string) => Promise<void>
+  saveVariable: (key: string, value: string) => Promise<void>
+  deleteVariable: (key: string) => Promise<void>
 }
 
 export const useVariableStore = create<VariableStore>((set) => ({
   variables: [],
   fetchVariables: async () => {
-    const r = await api.get('/variables')
-    set({ variables: r.data.variables })
+    try {
+      const r = await api.get('/workspace/variables')
+      const vars = r.data.variables || {}
+      set({ variables: Object.entries(vars).map(([key, value]) => ({ key, value: String(value) })) })
+    } catch (err) {
+      console.error('Failed to fetch variables:', err)
+    }
   },
-  saveVariable: async (name, value, source, jsonPath) => {
-    await api.post('/variables', { name, value, source, json_path: jsonPath })
-    const r = await api.get('/variables')
-    set({ variables: r.data.variables })
+  saveVariable: async (key, value) => {
+    try {
+      await api.put(`/workspace/variables/${encodeURIComponent(key)}`, { value })
+      const r = await api.get('/workspace/variables')
+      const vars = r.data.variables || {}
+      set({ variables: Object.entries(vars).map(([k, v]) => ({ key: k, value: String(v) })) })
+    } catch (err) {
+      console.error('Failed to save variable:', err)
+    }
   },
-  deleteVariable: async (id) => {
-    await api.delete(`/variables/${id}`)
-    const r = await api.get('/variables')
-    set({ variables: r.data.variables })
+  deleteVariable: async (key) => {
+    try {
+      await api.delete(`/workspace/variables/${encodeURIComponent(key)}`)
+      const r = await api.get('/workspace/variables')
+      const vars = r.data.variables || {}
+      set({ variables: Object.entries(vars).map(([k, v]) => ({ key: k, value: String(v) })) })
+    } catch (err) {
+      console.error('Failed to delete variable:', err)
+    }
   },
 }))

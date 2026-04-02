@@ -17,7 +17,13 @@ export default function EndpointBrowserPage() {
     setSearch, setSelectedGroup, fetchEndpoints, fetchGroups,
   } = useEndpointStore()
 
-  useEffect(() => { fetchEndpoints(); fetchGroups() }, [])
+  // Refetch when backend workspace changes (after load/unload completes)
+  useEffect(() => {
+    const refresh = () => { fetchEndpoints(); fetchGroups() }
+    refresh()
+    window.addEventListener('workspace-synced', refresh)
+    return () => window.removeEventListener('workspace-synced', refresh)
+  }, [])
 
   const filtered = useMemo(() => {
     let result = endpoints

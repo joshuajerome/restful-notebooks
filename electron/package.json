@@ -1,0 +1,51 @@
+{
+  "name": "restful-notebooks",
+  "version": "0.1.0",
+  "description": "Restful Notebooks — REST workflow tool",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux"
+  },
+  "dependencies": {
+    "electron": "^33.0.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.restful.notebooks",
+    "productName": "Restful Notebooks",
+    "directories": {
+      "output": "../dist/electron"
+    },
+    "extraResources": [
+      {
+        "from": "../dist/backend/restful-notebooks-server",
+        "to": "backend",
+        "filter": ["**/*"]
+      }
+    ],
+    "mac": {
+      "target": ["dmg", "zip"],
+      "icon": "icons/icon.icns",
+      "category": "public.app-category.developer-tools"
+    },
+    "win": {
+      "target": ["nsis"],
+      "icon": "icons/icon.ico"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "icon": "icons/icon.png"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "joshuajerome",
+      "repo": "post-it-desktop"
+    }
+  }
+}

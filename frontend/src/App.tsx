@@ -3,15 +3,15 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { ThemeProvider, CssBaseline, useMediaQuery } from '@mui/material'
 import { darkTheme, lightTheme } from './theme'
 import { useThemeStore } from './store/themeStore'
-import WorkspacesPage from './pages/WorkspacesPage'
 import WorkspaceLayout from './components/WorkspaceLayout'
-import DashboardPage from './pages/DashboardPage'
-import WorkspacesConfigPage from './pages/WorkspacesConfigPage'
+import WorkspacesPage from './pages/WorkspacesPage'
+import WorkspaceConfigPage from './pages/WorkspaceConfigPage'
 import EndpointBrowserPage from './pages/EndpointBrowserPage'
 import RequestBuilderPage from './pages/RequestBuilderPage'
 import HistoryPage from './pages/HistoryPage'
-import WorkflowsPage from './pages/WorkflowsPage'
+import NotebooksPage from './pages/WorkflowsPage'
 import AuditLogPage from './pages/AuditLogPage'
+import SettingsPage from './pages/SettingsPage'
 
 export default function App() {
   const { themeId } = useThemeStore()
@@ -29,20 +29,18 @@ export default function App() {
         {/* Landing — straight to request builder */}
         <Route path="/" element={<Navigate to="/app" replace />} />
 
-        {/* Old workspace page for standalone access */}
-        <Route path="/workspaces" element={<WorkspacesPage />} />
-
         {/* Main app shell */}
         <Route path="/app" element={<WorkspaceLayout />}>
-          <Route index element={<RequestBuilderPage />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="workspaces" element={<WorkspacesConfigPage />} />
+          <Route index element={<WorkspacesPage />} />
+          <Route path="workspaces" element={<WorkspacesPage />} />
+          <Route path="workspaces/:workspaceId" element={<WorkspaceConfigPage />} />
           <Route path="endpoints" element={<EndpointBrowserPage />} />
           <Route path="request" element={<RequestBuilderPage />} />
           <Route path="request/:endpointName" element={<RequestBuilderPage />} />
           <Route path="history" element={<HistoryPage />} />
-          <Route path="workflows" element={<WorkflowsPage />} />
+          <Route path="notebooks" element={<NotebooksPage />} />
           <Route path="audit" element={<AuditLogPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
     </ThemeProvider>

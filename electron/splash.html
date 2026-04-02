@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restful Notebooks</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0C1117;
+      color: #fff;
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      -webkit-app-region: drag;
+      user-select: none;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: #1D63ED; }
+    .progress-bar {
+      width: 200px;
+      height: 3px;
+      background: #1E2536;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #1D63ED;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .status {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.45);
+    }
+    .error { color: #F70B5B; }
+    .dev-badge {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      font-size: 10px;
+      color: rgba(255,255,255,0.3);
+      padding: 2px 6px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      -webkit-app-region: no-drag;
+    }
+  </style>
+</head>
+<body>
+  <div class="dev-badge" id="devBadge" style="display: none;">DEV</div>
+  <div class="logo"><span>&lt;/&gt;</span> Restful</div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="status" id="statusText">Starting up...</div>
+
+  <script>
+    const fill = document.getElementById("progressFill");
+    const status = document.getElementById("statusText");
+    const devBadge = document.getElementById("devBadge");
+
+    // Animate progress bar
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress = Math.min(progress + Math.random() * 15, 85);
+      fill.style.width = progress + "%";
+    }, 300);
+
+    // Show DEV badge
+    if (window.electronAPI) {
+      window.electronAPI.isDev().then((dev) => {
+        if (dev) devBadge.style.display = "block";
+      });
+    }
+
+    // Listen for progress messages from main process
+    window.addEventListener("message", (event) => {
+      const { type, message } = event.data || {};
+      if (type === "progress") {
+        status.textContent = message;
+        progress = 95;
+        fill.style.width = "95%";
+        clearInterval(interval);
+        setTimeout(() => {
+          fill.style.width = "100%";
+        }, 200);
+      }
+      if (type === "error") {
+        status.textContent = message;
+        status.classList.add("error");
+        fill.style.background = "#F70B5B";
+        fill.style.width = "100%";
+        clearInterval(interval);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -33,13 +33,19 @@ export const useEndpointStore = create<EndpointStore>((set) => ({
     set({ loading: true })
     try {
       const r = await api.get('/endpoints')
-      set({ endpoints: r.data.endpoints })
+      set({ endpoints: r.data.endpoints || [] })
+    } catch {
+      set({ endpoints: [] })
     } finally {
       set({ loading: false })
     }
   },
   fetchGroups: async () => {
-    const r = await api.get('/endpoints/groups')
-    set({ groups: r.data })
+    try {
+      const r = await api.get('/endpoints/groups')
+      set({ groups: r.data || [] })
+    } catch {
+      set({ groups: [] })
+    }
   },
 }))

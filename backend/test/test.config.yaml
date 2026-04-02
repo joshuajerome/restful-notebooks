@@ -1,0 +1,13 @@
+apiVersion: restful/v1
+workspace:
+  name: test
+apis:
+- name: API
+  alias: api
+  plugin: ''
+  source: ''
+  auth:
+    type: bearer
+    login_path: /security/v1/auth/login
+    username: ''
+    password_env: ''

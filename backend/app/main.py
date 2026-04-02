@@ -1,26 +1,34 @@
+"""Restful Notebooks backend — thin adapter for the restful library."""
+
 import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import init_db
-from app.routers import config, endpoints, requests, variables
-from app.services import endpoint_service
+from app.routers import endpoints, plugins, requests, workflow, workspace
+from app.services.workspace_manager import WorkspaceManager
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
 
-    # Load endpoints from generated module or file
-    endpoints_path = os.environ.get("POSTIT_ENDPOINTS_MODULE", "sfm_endpoints")
-    endpoint_service.load_endpoints(endpoints_path)
+    mgr = WorkspaceManager()
+    ws_path = os.environ.get("RESTFUL_WORKSPACE")
+    try:
+        mgr.load(Path(ws_path) if ws_path else None)
+    except FileNotFoundError:
+        pass  # No workspace yet — that's OK, health will report it
 
+    app.state.ws = mgr
     yield
+    mgr.close()
 
 
-app = FastAPI(title="post-it Desktop", version="0.1.0", lifespan=lifespan)
+app = FastAPI(title="Restful Notebooks", version="0.1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,13 +38,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# API routers
+app.include_router(workspace.router)
 app.include_router(endpoints.router)
 app.include_router(requests.router)
-app.include_router(variables.router)
-app.include_router(config.router)
+app.include_router(workflow.router)
+app.include_router(plugins.router)
 
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok"}
+    mgr: WorkspaceManager = app.state.ws
+    return {
+        "status": "ok",
+        "workspace": mgr.config.name if mgr.config else None,
+        "workspace_root": str(mgr.config.root) if mgr.config else None,
+    }

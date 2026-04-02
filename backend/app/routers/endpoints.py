@@ -1,7 +1,10 @@
-from fastapi import APIRouter, Query
+"""Endpoint browsing — reads from WorkspaceManager's loaded endpoints."""
 
+from fastapi import APIRouter, Depends, HTTPException, Query
+
+from app.dependencies import get_ws
 from app.schemas.endpoints import EndpointInfo, EndpointListResponse
-from app.services import endpoint_service
+from app.services.workspace_manager import WorkspaceManager
 
 router = APIRouter(prefix="/api/endpoints", tags=["endpoints"])
 
@@ -10,12 +13,15 @@ router = APIRouter(prefix="/api/endpoints", tags=["endpoints"])
 def list_endpoints(
     search: str | None = Query(None),
     group: str | None = Query(None),
+    mgr: WorkspaceManager = Depends(get_ws),
 ):
-    endpoints = endpoint_service.get_endpoints()
+    endpoints = list(mgr.endpoints)
 
     if search:
-        search_lower = search.lower()
-        endpoints = [e for e in endpoints if search_lower in e.name.lower() or search_lower in e.path.lower()]
+        s = search.lower()
+        endpoints = [
+            e for e in endpoints if s in e.name.lower() or s in e.display_name.lower() or s in e.path.lower()
+        ]
 
     if group:
         endpoints = [e for e in endpoints if e.group == group]
@@ -24,17 +30,13 @@ def list_endpoints(
 
 
 @router.get("/groups")
-def list_groups() -> list[str]:
-    endpoints = endpoint_service.get_endpoints()
-    groups = sorted(set(e.group for e in endpoints))
-    return groups
+def list_groups(mgr: WorkspaceManager = Depends(get_ws)) -> list[str]:
+    return sorted({e.group for e in mgr.endpoints})
 
 
 @router.get("/{name}", response_model=EndpointInfo)
-def get_endpoint(name: str):
-    ep = endpoint_service.find_endpoint(name)
-    if not ep:
-        from fastapi import HTTPException
-
-        raise HTTPException(status_code=404, detail=f"Endpoint '{name}' not found")
-    return ep
+def get_endpoint(name: str, mgr: WorkspaceManager = Depends(get_ws)):
+    for ep in mgr.endpoints:
+        if ep.name == name:
+            return ep
+    raise HTTPException(status_code=404, detail=f"Endpoint '{name}' not found")

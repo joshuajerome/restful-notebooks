@@ -1,0 +1,85 @@
+site_name: Restful Notebooks
+site_description: >
+  Desktop companion app for restful — visual REST workspace management,
+  endpoint browsing, request execution, and workflow orchestration.
+site_url: https://joshuajerome.github.io/restful-notebooks
+repo_url: https://github.com/joshuajerome/restful-notebooks
+repo_name: joshuajerome/restful-notebooks
+edit_uri: edit/integration/docs/
+
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Light mode
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Dark mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.action.edit
+
+plugins:
+  - search
+  - callouts
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: ["."]
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - tables
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: true
+      title: On this page
+
+# ── Navigation ──────────────────────────────────────────────────────────────
+nav:
+  - Home: index.md
+
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+
+  - Architecture:
+    - Overview: architecture/overview.md
+    - Backend API: architecture/backend-api.md
+    - Frontend: architecture/frontend.md
+    - Electron Shell: architecture/electron-shell.md
+
+  - Guides:
+    - Using the Request Builder: guides/request-builder.md
+    - Workspace Configuration: guides/workspace-config.md
+    - Workflow Editor: guides/workflow-editor.md
+
+  - Development:
+    - Branching Guide: development/branching.md
+    - CI/CD Workflows: development/workflows.md
+    - Release Process: development/release-process.md
+    - Capabilities: capabilities.md
+    - Patch Notes: patch-notes.md

@@ -1,144 +1,166 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Box, Button, Card, CardActionArea, CardContent, Dialog, DialogActions,
-  DialogContent, DialogTitle, Grid, Stack, TextField, Typography,
-  AppBar, Toolbar,
+  alpha, Box, Button, Card, CardContent, Chip, Dialog, DialogActions,
+  DialogContent, DialogTitle, IconButton, Stack, TextField, Tooltip, Typography,
 } from '@mui/material'
-import { Add, DataObject, FolderOpen } from '@mui/icons-material'
-// uses theme palette via sx props
+import { Add, Edit, FolderOpen } from '@mui/icons-material'
+import { useWorkspaceStore, Workspace, WORKSPACE_COLORS } from '../store/workspaceStore'
+import { useNotificationStore } from '../store/notificationStore'
+import { useThemeStore } from '../store/themeStore'
+import api from '../api/client'
 
-interface Workspace {
-  id: string
-  name: string
-  plugin: string
-  created: string
-}
+const POLKADOT_BG = `radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)`
+const POLKADOT_SIZE = '24px 24px'
 
 export default function WorkspacesPage() {
   const navigate = useNavigate()
-  const [workspaces, setWorkspaces] = useState<Workspace[]>(() => {
-    const saved = localStorage.getItem('postit_workspaces')
-    return saved ? JSON.parse(saved) : []
-  })
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [name, setName] = useState('')
-  const [plugin, setPlugin] = useState('snf-instance-rest')
+  const { workspaces, activeId, setActive, create, update, remove, duplicate } = useWorkspaceStore()
+  const { add: notify } = useNotificationStore()
+  const { tempWorkspaceColor } = useThemeStore()
 
-  const handleCreate = () => {
-    const ws: Workspace = {
-      id: crypto.randomUUID().slice(0, 8),
-      name: name || 'untitled',
-      plugin,
-      created: new Date().toISOString(),
-    }
-    const updated = [...workspaces, ws]
-    setWorkspaces(updated)
-    localStorage.setItem('postit_workspaces', JSON.stringify(updated))
-    setDialogOpen(false)
-    setName('')
-    navigate(`/workspace/${ws.id}`)
+  const [editMode, setEditMode] = useState(false)
+  const [createOpen, setCreateOpen] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [newPath, setNewPath] = useState('')
+
+  const pickableColors = WORKSPACE_COLORS.filter((c) => c !== tempWorkspaceColor)
+
+  const handleCardClick = (ws: Workspace) => {
+    if (editMode) return
+    navigate(`/app/workspaces/${ws.id}`)
   }
 
-  return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      {/* Header — gradient like cutip-desktop */}
-      <AppBar
-        position="static"
-        elevation={0}
-        sx={{
-          bgcolor: '#000',
-          borderBottom: 1, borderColor: 'divider',
-        }}
-      >
-        <Toolbar sx={{ minHeight: 56, height: 56 }}>
-          <DataObject sx={{ mr: 1, color: '#fff' }} />
-          <Typography variant="h6" noWrap sx={{ fontWeight: 700, fontSize: 16, color: '#fff' }}>
-            post-it
-          </Typography>
-        </Toolbar>
-      </AppBar>
+  const handleColorChange = (ws: Workspace, color: string) => {
+    update(ws.id, { color })
+  }
 
-      {/* Content */}
-      <Box sx={{ maxWidth: 900, mx: 'auto', p: 4 }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700 }}>Workspaces</Typography>
-          <Button variant="contained" startIcon={<Add />} onClick={() => setDialogOpen(true)}>
+  const handleBrowse = async () => {
+    try {
+      const dir = await (window as any).electronAPI?.selectDirectory()
+      if (dir) setNewPath(dir)
+    } catch { /* not in Electron */ }
+  }
+
+  const handleCreate = async () => {
+    const name = newName.trim() || 'untitled'
+    let rootPath = newPath.trim()
+    try {
+      const resp = await api.post('/workspace/create', { name, path: rootPath })
+      rootPath = resp.data?.root || rootPath
+    } catch { /* backend may not be available */ }
+    const ws = create(name, undefined, rootPath)
+    setNewName('')
+    setNewPath('')
+    setCreateOpen(false)
+    notify(`Workspace "${ws.name}" created`, 'success')
+  }
+
+  const isTemp = (ws: Workspace) => ws.color === tempWorkspaceColor
+
+  return (
+    <Box sx={{ minHeight: '100%', backgroundImage: POLKADOT_BG, backgroundSize: POLKADOT_SIZE }}>
+      {/* Top bar */}
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+        <Typography variant="h5">Workspaces</Typography>
+        <Stack direction="row" spacing={1}>
+          <Button variant={editMode ? 'contained' : 'outlined'} size="small" startIcon={<Edit />}
+            onClick={() => setEditMode(!editMode)}>
+            {editMode ? 'Done' : 'Edit'}
+          </Button>
+          <Button variant="contained" size="small" startIcon={<Add />}
+            onClick={() => { setNewName(''); setNewPath(''); setCreateOpen(true) }}>
             New Workspace
           </Button>
         </Stack>
+      </Stack>
 
-        {workspaces.length === 0 ? (
-          <Card
-            sx={{
-              p: 6,
-              textAlign: 'center',
-              bgcolor: 'background.paper',
-              border: '1px dashed',
-              borderColor: 'divider',
-            }}
-          >
-            <FolderOpen sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
-            <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
-              No workspaces yet
-            </Typography>
-            <Typography color="text.secondary" fontSize={13} sx={{ mb: 3 }}>
-              Create a workspace to start making API requests
-            </Typography>
-            <Button variant="contained" startIcon={<Add />} onClick={() => setDialogOpen(true)}>
-              Create Workspace
-            </Button>
-          </Card>
-        ) : (
-          <Grid container spacing={2}>
-            {workspaces.map((ws) => (
-              <Grid item xs={4} key={ws.id}>
-                <Card>
-                  <CardActionArea onClick={() => navigate(`/workspace/${ws.id}`)}>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ fontSize: 15, fontWeight: 600 }}>{ws.name}</Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12 }}>
-                        {ws.plugin}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: 11, mt: 1 }}>
-                        {new Date(ws.created).toLocaleDateString()}
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        )}
-      </Box>
+      {/* Workspace grid */}
+      {workspaces.length === 0 ? (
+        <Box sx={{ textAlign: 'center', py: 8 }}>
+          <Typography color="text.secondary" sx={{ mb: 2 }}>No workspaces</Typography>
+          <Button variant="contained" startIcon={<Add />} onClick={() => setCreateOpen(true)}>Create</Button>
+        </Box>
+      ) : (
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+          {workspaces.map((ws) => (
+            <Card key={ws.id}
+              sx={{
+                width: 240, cursor: editMode ? 'grab' : 'pointer',
+                borderLeft: `4px solid ${ws.color}`,
+                outline: ws.id === activeId ? `2px solid ${ws.color}` : 'none',
+                outlineOffset: 2,
+                transition: 'box-shadow 0.15s',
+                '&:hover': editMode ? {} : { boxShadow: 6 },
+              }}
+              onClick={() => handleCardClick(ws)}
+            >
+              <CardContent sx={{ pb: '12px !important' }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                  <Box>
+                    <Stack direction="row" alignItems="center" spacing={0.5}>
+                      <Typography variant="h6" sx={{ fontSize: 14 }}>{ws.name}</Typography>
+                      {isTemp(ws) && (
+                        <Typography component="span" sx={{ fontSize: 10, color: 'text.disabled', fontStyle: 'italic' }}>(tmp)</Typography>
+                      )}
+                    </Stack>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: 11 }}>
+                      {ws.apis.length} API{ws.apis.length !== 1 ? 's' : ''}
+                      {ws.apis.some((a) => a.plugin) && ` — ${ws.apis.filter((a) => a.plugin).map((a) => a.plugin).join(', ')}`}
+                    </Typography>
+                  </Box>
+                  {ws.id === activeId && (
+                    <Chip label="active" size="small"
+                      sx={{ bgcolor: alpha('#38A169', 0.15), color: '#38A169', fontSize: 10, height: 18 }} />
+                  )}
+                </Stack>
 
-      {/* Create dialog */}
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
+                {editMode && (
+                  <Stack direction="row" spacing={0.5} sx={{ mt: 1.5 }}>
+                    {pickableColors.map((c) => (
+                      <Box key={c} onClick={(e) => { e.stopPropagation(); handleColorChange(ws, c) }}
+                        sx={{ width: 16, height: 16, borderRadius: '50%', bgcolor: c, cursor: 'pointer',
+                          border: ws.color === c ? '2px solid #fff' : '2px solid transparent' }} />
+                    ))}
+                  </Stack>
+                )}
+
+                {editMode && (
+                  <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                    <Button size="small" onClick={(e) => { e.stopPropagation(); duplicate(ws.id); notify(`Duplicated "${ws.name}"`, 'info') }}>
+                      Duplicate
+                    </Button>
+                    <Button size="small" color="error" onClick={(e) => { e.stopPropagation(); remove(ws.id); notify(`Deleted "${ws.name}"`, 'info') }}>
+                      Delete
+                    </Button>
+                  </Stack>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
+      )}
+
+      {/* New workspace dialog */}
+      <Dialog open={createOpen} onClose={() => setCreateOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>New Workspace</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
-            <TextField
-              size="small"
-              label="Workspace Name"
-              placeholder="my-sfm-project"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              fullWidth
-              autoFocus
-            />
-            <TextField
-              size="small"
-              label="Plugin"
-              value={plugin}
-              onChange={(e) => setPlugin(e.target.value)}
-              fullWidth
-              helperText="e.g. snf-instance-rest"
-            />
+            <TextField size="small" label="Name" placeholder="my-project" value={newName}
+              onChange={(e) => setNewName(e.target.value)} fullWidth autoFocus inputProps={{ style: { fontSize: 14 } }} />
+            <Stack direction="row" spacing={1} alignItems="flex-start">
+              <TextField size="small" label="Path" placeholder="/path/to/workspace" value={newPath}
+                onChange={(e) => setNewPath(e.target.value)} fullWidth inputProps={{ style: { fontSize: 14 } }}
+                helperText="Parent directory where workspace folder will be created" FormHelperTextProps={{ sx: { fontSize: 11 } }} />
+              <Tooltip title="Browse for directory">
+                <IconButton size="small" onClick={handleBrowse} sx={{ mt: 0.5 }}><FolderOpen /></IconButton>
+              </Tooltip>
+            </Stack>
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleCreate}>Create</Button>
+          <Button size="small" onClick={() => setCreateOpen(false)}>Cancel</Button>
+          <Button size="small" variant="contained" onClick={handleCreate}>Create</Button>
         </DialogActions>
       </Dialog>
     </Box>

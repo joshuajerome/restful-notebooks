@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
+import SyntaxEditor from '../components/SyntaxEditor'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   Autocomplete, Box, Button, Chip, Divider, FormControl,
@@ -38,42 +39,7 @@ function KeyValueEditor({ entries, onChange, label, infoText }: {
   )
 }
 
-// JSON editor with syntax highlighting + 4-space indent
-const SYN = { key: '#9CDCFE', string: '#CE9178', number: '#B5CEA8', bool: '#569CD6', null: '#569CD6', bracket: '#D4D4D4', punct: '#D4D4D4' }
-
-function JsonEditor({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const ref = useRef<HTMLTextAreaElement>(null)
-  const INDENT = '    ' // 4 spaces
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    const ta = ref.current; if (!ta) return
-    if (e.key === 'Tab') {
-      e.preventDefault(); const s = ta.selectionStart, end = ta.selectionEnd
-      const nv = ta.value.substring(0, s) + INDENT + ta.value.substring(end)
-      onChange(nv); requestAnimationFrame(() => { ta.selectionStart = ta.selectionEnd = s + INDENT.length })
-    }
-    if (e.key === 'Enter') {
-      const s = ta.selectionStart, val = ta.value, ls = val.lastIndexOf('\n', s - 1) + 1
-      const indent = val.substring(ls, s).match(/^(\s*)/)?.[1] || '', before = val[s - 1], after = val[s]
-      if (before === '{' || before === '[') {
-        e.preventDefault(); const ei = indent + INDENT
-        if (after === '}' || after === ']') {
-          const nv = val.substring(0, s) + '\n' + ei + '\n' + indent + val.substring(s)
-          onChange(nv); requestAnimationFrame(() => { ta.selectionStart = ta.selectionEnd = s + 1 + ei.length })
-        } else {
-          const nv = val.substring(0, s) + '\n' + ei + val.substring(s)
-          onChange(nv); requestAnimationFrame(() => { ta.selectionStart = ta.selectionEnd = s + 1 + ei.length })
-        }
-      } else if (indent) {
-        e.preventDefault(); const nv = val.substring(0, s) + '\n' + indent + val.substring(s)
-        onChange(nv); requestAnimationFrame(() => { ta.selectionStart = ta.selectionEnd = s + 1 + indent.length })
-      }
-    }
-  }, [onChange])
-  return (
-    <TextField inputRef={ref} multiline rows={10} fullWidth value={value} onChange={(e) => onChange(e.target.value)} onKeyDown={handleKeyDown as any}
-      placeholder={'{\n    "key": "value"\n}'} InputProps={{ sx: { fontFamily: '"Fira Code","Consolas",monospace', fontSize: 12, lineHeight: 1.6, bgcolor: '#1E1E1E', color: '#D4D4D4', '& textarea': { caretColor: '#fff' } } }} />
-  )
-}
+// Payload editor uses the shared SyntaxEditor component
 
 // Resizable bottom preview panel
 function PreviewPanel({ method, path, params, query, payload, baseUrl }: {
@@ -134,11 +100,9 @@ export default function RequestBuilderPage() {
   const { fetchVariables } = useVariableStore()
   const { active } = useWorkspaceStore()
   const [tab, setTab] = useState(0)
-  const [baseUrl, setBaseUrl] = useState('')
+  const baseUrl = active?.apis?.[0]?.base_url || ''
 
-  useEffect(() => { fetchEndpoints(); fetchVariables()
-    import('../api/client').then(({ default: api }) => api.get('/config').then((r) => setBaseUrl(r.data.base_url || '')).catch(() => {}))
-  }, [])
+  useEffect(() => { fetchEndpoints(); fetchVariables() }, [])
 
   useEffect(() => { if (routeEp && endpoints.length) { const ep = endpoints.find((e) => e.name === routeEp); if (ep) { setEndpoint(ep.name, ep.path); if (ep.methods.length === 1) setMethod(ep.methods[0]) } } }, [routeEp, endpoints])
 
@@ -207,7 +171,7 @@ export default function RequestBuilderPage() {
           renderInput={(p) => <TextField {...p} placeholder="Search or select endpoint..." />}
         />
 
-        <Button variant="contained" onClick={execute} disabled={loading || !endpointName}
+        <Button variant="contained" onClick={() => execute(active?.apis?.[0]?.alias)} disabled={loading || !endpointName}
           startIcon={loading ? <CircularProgress size={16} /> : <Send />}>Send</Button>
       </Stack>
 
@@ -223,7 +187,7 @@ export default function RequestBuilderPage() {
 
       {tab === 0 && <KeyValueEditor entries={params} onChange={setParams} label="param" infoText="OData key predicates appended to the path. Example: id=abc, namespace=prod → /Nodes(abc,prod)" />}
       {tab === 1 && <KeyValueEditor entries={query} onChange={setQuery} label="query param" infoText="URL query string params. Example: $expand=BlueprintTemplates → ?$expand=BlueprintTemplates" />}
-      {tab === 2 && <JsonEditor value={payload} onChange={setPayload} />}
+      {tab === 2 && <SyntaxEditor value={payload} onChange={setPayload} language="json" placeholder='{\n    "key": "value"\n}' rows={10} />}
 
       {/* Response */}
       {response && (

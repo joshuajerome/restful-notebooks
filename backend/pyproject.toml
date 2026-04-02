@@ -3,9 +3,9 @@ requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "post-it-desktop-backend"
+name = "restful-notebooks-backend"
 version = "0.1.0"
-description = "post-it desktop backend"
+description = "Restful Notebooks backend"
 requires-python = ">=3.10"
 dependencies = [
     "fastapi>=0.115.0",
@@ -13,11 +13,11 @@ dependencies = [
     "sqlalchemy>=2.0.0",
     "aiosqlite>=0.20.0",
     "pydantic>=2.0.0",
-    "post-it",
+    "restful-sdk",
 ]
 
 [tool.uv.sources]
-post-it = { path = "../../post-it", editable = true }
+restful-sdk = { path = "../../post-it", editable = true }
 
 [dependency-groups]
 dev = [

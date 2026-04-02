@@ -7,10 +7,10 @@ class ExecuteRequest(BaseModel):
     method: str
     endpoint_name: str
     endpoint_path: str
+    api_alias: str = ""  # which workspace API to use
     params: dict[str, str] | None = None
     query: dict[str, Any] | None = None
     payload: Any | None = None
-    expected_status: list[int] | None = None
 
 
 class ExecuteResponse(BaseModel):

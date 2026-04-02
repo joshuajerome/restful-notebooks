@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import {
   alpha, Badge, Box, Button, Chip, Divider, Drawer, IconButton, List,
@@ -6,12 +6,11 @@ import {
   AppBar, Toolbar, Tooltip, ToggleButtonGroup, ToggleButton, Typography,
 } from '@mui/material'
 import {
-  Add, Api, ArrowBack, ArrowForward, ChevronLeft, Dashboard, DataObject,
-  DarkMode, History, LightMode, Menu as MenuIcon, Notifications,
-  SettingsBrightness, Workspaces as WorkspacesIcon,
-  AccountTree, Receipt,
+  Api, ArrowBack, ArrowForward, AutoStories, ChevronLeft, ChevronRight, DataObject,
+  DarkMode, ElectricBolt, History, LightMode, Notifications,
+  SettingsBrightness, SwapHoriz, Workspaces as WorkspacesIcon,
+  Receipt, Settings,
 } from '@mui/icons-material'
-import { useState } from 'react'
 import { useThemeStore, ThemeId } from '../store/themeStore'
 import { useWorkspaceStore, Workspace } from '../store/workspaceStore'
 import { useNotificationStore } from '../store/notificationStore'
@@ -24,6 +23,9 @@ const DRAWER_WIDTH = 200
 const DRAWER_WIDTH_COLLAPSED = 56
 const FOOTER_HEIGHT = 28
 
+const isMac = navigator.platform.toUpperCase().includes('MAC')
+const isWindows = navigator.platform.toUpperCase().includes('WIN')
+
 export default function WorkspaceLayout() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -34,9 +36,54 @@ export default function WorkspaceLayout() {
   const drawerWidth = sidebarCollapsed ? DRAWER_WIDTH_COLLAPSED : DRAWER_WIDTH
   const [wsSwitcherAnchor, setWsSwitcherAnchor] = useState<null | HTMLElement>(null)
 
+  const [backendConnected, setBackendConnected] = useState(false)
+  const [backendWorkspace, setBackendWorkspace] = useState<string | null>(null)
+
   useAuditIntegration()
   useEffect(() => { load() }, [])
   useEffect(() => { push(location.pathname) }, [location.pathname])
+
+  // Sync active workspace to backend whenever it changes
+  useEffect(() => {
+    const sync = async () => {
+      try {
+        if (active?.path) {
+          await fetch('/api/workspace/load', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: active.path }),
+          })
+        } else {
+          await fetch('/api/workspace/unload', { method: 'POST' })
+        }
+      } catch { /* backend unavailable */ }
+      // Signal that backend workspace state has changed
+      window.dispatchEvent(new Event('workspace-synced'))
+    }
+    sync()
+  }, [activeId])
+
+  // Poll backend health every 5s
+  const checkHealth = useCallback(async () => {
+    try {
+      const r = await fetch('/api/health')
+      if (r.ok) {
+        const data = await r.json()
+        setBackendConnected(true)
+        setBackendWorkspace(data.workspace || null)
+      } else {
+        setBackendConnected(false)
+      }
+    } catch {
+      setBackendConnected(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    checkHealth()
+    const interval = setInterval(checkHealth, 5000)
+    return () => clearInterval(interval)
+  }, [checkHealth])
 
   const handleBack = () => { const p = goBack(); if (p) navigate(p) }
   const handleForward = () => { const p = goForward(); if (p) navigate(p) }
@@ -86,18 +133,22 @@ export default function WorkspaceLayout() {
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       {/* AppBar */}
       <AppBar position="fixed" elevation={0}
-        sx={{ zIndex: (t) => t.zIndex.drawer + 2, bgcolor: '#000', borderBottom: 1, borderColor: 'divider', height: 56 }}>
-        <Toolbar sx={{ minHeight: 56, height: 56, gap: 0.5 }}>
-          <Box onClick={() => navTo('/dashboard')} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', mr: 1 }}>
+        sx={{ zIndex: (t) => t.zIndex.drawer + 2, bgcolor: '#000', borderBottom: 1, borderColor: 'divider', height: 56, WebkitAppRegion: 'drag' }}>
+        <Toolbar sx={{
+          minHeight: '56px !important', height: 56, gap: 0.5,
+          pl: isMac ? '80px !important' : '24px !important',
+          pr: isWindows ? '140px !important' : '16px !important',
+        }}>
+          <Box onClick={() => navTo('/workspaces')} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', mr: 1, WebkitAppRegion: 'no-drag' }}>
             <DataObject sx={{ mr: 0.5, color: '#fff', fontSize: 20 }} />
-            <Typography noWrap sx={{ fontWeight: 700, fontSize: 15, color: '#fff' }}>post-it</Typography>
+            <Typography noWrap sx={{ fontWeight: 700, fontSize: 15, color: '#fff' }}>Restful</Typography>
           </Box>
 
           {/* Nav arrows */}
-          <IconButton size="small" disabled={!canGoBack()} onClick={handleBack} sx={{ color: 'rgba(255,255,255,0.6)' }}>
+          <IconButton size="small" disabled={!canGoBack()} onClick={handleBack} sx={{ color: 'rgba(255,255,255,0.6)', WebkitAppRegion: 'no-drag' }}>
             <ArrowBack sx={{ fontSize: 18 }} />
           </IconButton>
-          <IconButton size="small" disabled={!canGoForward()} onClick={handleForward} sx={{ color: 'rgba(255,255,255,0.6)' }}>
+          <IconButton size="small" disabled={!canGoForward()} onClick={handleForward} sx={{ color: 'rgba(255,255,255,0.6)', WebkitAppRegion: 'no-drag' }}>
             <ArrowForward sx={{ fontSize: 18 }} />
           </IconButton>
 
@@ -111,14 +162,15 @@ export default function WorkspaceLayout() {
                 ml: 1, bgcolor: 'transparent', border: '1.5px solid',
                 borderColor: active.color, color: active.color,
                 fontWeight: 600, fontSize: 12, cursor: 'pointer',
+                WebkitAppRegion: 'no-drag',
                 '&:hover': { bgcolor: alpha(active.color, 0.1) },
               }}
             />
           )}
 
           {/* Workspace switcher dropdown */}
-          <IconButton size="small" onClick={(e) => setWsSwitcherAnchor(e.currentTarget)} sx={{ color: 'rgba(255,255,255,0.5)', ml: 0.5 }}>
-            <WorkspacesIcon sx={{ fontSize: 16 }} />
+          <IconButton size="small" onClick={(e) => setWsSwitcherAnchor(e.currentTarget)} sx={{ color: 'rgba(255,255,255,0.5)', ml: 0.5, WebkitAppRegion: 'no-drag' }}>
+            <SwapHoriz sx={{ fontSize: 16 }} />
           </IconButton>
           <Menu anchorEl={wsSwitcherAnchor} open={Boolean(wsSwitcherAnchor)} onClose={() => setWsSwitcherAnchor(null)}>
             {workspaces.map((ws) => (
@@ -133,7 +185,7 @@ export default function WorkspaceLayout() {
 
           {/* Notifications */}
           <Tooltip title="Notifications">
-            <IconButton onClick={togglePanel} sx={{ color: 'rgba(255,255,255,0.7)' }}>
+            <IconButton onClick={togglePanel} sx={{ color: 'rgba(255,255,255,0.7)', WebkitAppRegion: 'no-drag' }}>
               <Badge badgeContent={unreadCount()} color="error" variant="dot">
                 <Notifications sx={{ fontSize: 18 }} />
               </Badge>
@@ -141,8 +193,8 @@ export default function WorkspaceLayout() {
           </Tooltip>
 
           {/* + Request */}
-          <Button variant="contained" size="small" startIcon={<Add />} onClick={handleNewRequest}
-            sx={{ ml: 1, fontSize: 12, px: 1.5, py: 0.5, minHeight: 30 }}>
+          <Button size="small" startIcon={<ElectricBolt />} onClick={handleNewRequest}
+            sx={{ ml: 1, fontSize: 12, px: 1.5, py: 0.5, minHeight: 30, bgcolor: '#E57C23', '&:hover': { bgcolor: '#D06B1A' }, WebkitAppRegion: 'no-drag', color: '#fff' }}>
             Request
           </Button>
         </Toolbar>
@@ -158,7 +210,6 @@ export default function WorkspaceLayout() {
 
         {/* Core */}
         <List dense disablePadding>
-          {renderNavItem('Dashboard', <Dashboard fontSize="small" />, '/dashboard')}
           {renderNavItem('Workspaces', <WorkspacesIcon fontSize="small" />, '/workspaces')}
         </List>
 
@@ -169,7 +220,7 @@ export default function WorkspaceLayout() {
         }
         <List dense disablePadding>
           {renderNavItem('Endpoints', <Api fontSize="small" />, '/endpoints', !hasActiveWs)}
-          {renderNavItem('Workflows', <AccountTree fontSize="small" />, '/workflows', !hasActiveWs)}
+          {renderNavItem('Notebooks', <AutoStories fontSize="small" />, '/notebooks', !hasActiveWs)}
         </List>
 
         {/* Activity section */}
@@ -182,7 +233,31 @@ export default function WorkspaceLayout() {
           {renderNavItem('Audit Log', <Receipt fontSize="small" />, '/audit')}
         </List>
 
-        {/* Theme toggle */}
+        {/* Settings */}
+        <List dense disablePadding>
+          {renderNavItem('Settings', <Settings fontSize="small" />, '/settings')}
+        </List>
+
+        {/* Theme toggle + collapse */}
+        <Box sx={{ borderTop: 1, borderColor: 'divider' }}>
+          <ListItemButton
+            onClick={toggleSidebar}
+            sx={{
+              py: 0.5, minHeight: 32,
+              ...(sidebarCollapsed ? { justifyContent: 'center', px: 1.5 } : {}),
+              color: 'text.secondary',
+            }}
+          >
+            {sidebarCollapsed ? (
+              <ChevronRight sx={{ fontSize: 16 }} />
+            ) : (
+              <>
+                <ListItemText primary="Collapse" primaryTypographyProps={{ fontSize: '0.75rem', color: 'text.secondary' }} />
+                <ChevronLeft sx={{ fontSize: 16 }} />
+              </>
+            )}
+          </ListItemButton>
+        </Box>
         <Box sx={{ borderTop: 1, borderColor: 'divider' }}>
           {sidebarCollapsed ? (
             <Tooltip title="Toggle theme" placement="right">
@@ -205,18 +280,6 @@ export default function WorkspaceLayout() {
         </Box>
       </Drawer>
 
-      {/* Collapse button */}
-      <IconButton onClick={toggleSidebar} size="small"
-        sx={{
-          position: 'fixed', left: drawerWidth - 12, top: 132,
-          zIndex: (t) => t.zIndex.drawer + 3, width: 24, height: 24, borderRadius: '50%',
-          bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', color: 'text.secondary',
-          transition: 'left 0.2s, background-color 0.15s',
-          '&:hover': { bgcolor: 'primary.main', color: '#fff', borderColor: 'primary.main' },
-        }}>
-        {sidebarCollapsed ? <MenuIcon sx={{ fontSize: 14 }} /> : <ChevronLeft sx={{ fontSize: 14 }} />}
-      </IconButton>
-
       {/* Main content area — scrollbar confined here */}
       <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, mt: '56px', height: 'calc(100vh - 56px)', overflow: 'hidden' }}>
         <Box component="main" sx={{ flexGrow: 1, p: 3, overflow: 'auto', bgcolor: 'background.default' }}>
@@ -225,12 +288,18 @@ export default function WorkspaceLayout() {
 
         {/* Footer */}
         <Box sx={{
-          height: FOOTER_HEIGHT, minHeight: FOOTER_HEIGHT, display: 'flex', alignItems: 'center',
+          height: FOOTER_HEIGHT, minHeight: FOOTER_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           px: 2, borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper',
         }}>
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>
-            {active ? active.name : 'no workspace'} — post-it v0.1.0 — post-it-desktop v0.1.0
+            {active ? active.name : 'no workspace'} — restful v0.1.0 — Restful Notebooks v0.1.0{window.location.port === '3000' ? ' DEV' : ''}
           </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: backendConnected ? 'success.main' : 'error.main' }} />
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>
+              {backendConnected ? `Backend connected${backendWorkspace ? ` (${backendWorkspace})` : ''}` : 'Backend disconnected'}
+            </Typography>
+          </Box>
         </Box>
       </Box>
 

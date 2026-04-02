@@ -56,5 +56,5 @@ export function useAuditIntegration() {
         `${response.duration_ms}ms`
       )
     }
-  }, [response])
+  }, [response, method, endpointName])
 }

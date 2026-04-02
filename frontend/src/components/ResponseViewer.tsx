@@ -63,7 +63,7 @@ export default function ResponseViewer({ body, source = '' }: Props) {
       const value = typeof contextMenu.value === 'string'
         ? contextMenu.value
         : JSON.stringify(contextMenu.value)
-      saveVariable(name, value, source, `response${contextMenu.path}`)
+      saveVariable(name, value)
     }
     handleClose()
   }

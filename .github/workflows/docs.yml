@@ -1,0 +1,70 @@
+name: Docs
+
+on:
+  push:
+    branches:
+      - staging
+      - integration
+      - "docs/**"
+  pull_request:
+    branches:
+      - staging
+      - integration
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+
+jobs:
+  # ── Build (all triggers) ────────────────────────────────────────────────────
+  build:
+    name: MkDocs · Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Install docs dependencies
+        run: |
+          uv venv .venv
+          uv pip install mkdocs-material "mkdocs<2.0" mkdocs-callouts
+
+      - name: Build docs (strict — fails on any warning)
+        run: uv run mkdocs build --strict
+
+  # ── Deploy to GitHub Pages (integration push only) ──────────────────────────
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: build
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/integration' &&
+      !github.event.repository.private
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Install docs dependencies
+        run: |
+          uv venv .venv
+          uv pip install mkdocs-material "mkdocs<2.0" mkdocs-callouts
+
+      - name: Deploy GitHub Pages
+        run: uv run mkdocs gh-deploy --force

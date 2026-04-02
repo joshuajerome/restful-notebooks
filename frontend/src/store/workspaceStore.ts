@@ -3,27 +3,34 @@ import { create } from 'zustand'
 export interface ApiConfig {
   id: string
   name: string
+  alias: string
   plugin: string
+  source_file: string
   base_url: string
+  plugin_path: string
   auth_type: 'bearer' | 'apikey' | 'none'
   login_path: string
   username: string
+  password_env: string
   password: string
   api_key: string
   api_key_header: string
+  api_key_env: string
+  credential_mode: 'manual' | 'env'
 }
 
 export interface Workspace {
   id: string
   name: string
+  path: string
   color: string
   apis: ApiConfig[]
   variables: Record<string, string>
   created: string
 }
 
-const STORAGE_KEY = 'postit_workspaces_v2'
-const ACTIVE_KEY = 'postit_active_workspace'
+const STORAGE_KEY = 'restful_workspaces_v2'
+const ACTIVE_KEY = 'restful_active_workspace'
 
 const COLORS = ['#1D63ED', '#38A169', '#C77D1A', '#C53030', '#319795', '#805AD5', '#D53F8C', '#718096']
 
@@ -31,14 +38,20 @@ function newApiConfig(partial?: Partial<ApiConfig>): ApiConfig {
   return {
     id: crypto.randomUUID().slice(0, 8),
     name: 'API',
-    plugin: 'snf-instance-rest',
+    alias: 'api',
+    plugin: '',
+    source_file: '',
     base_url: '',
+    plugin_path: '',
     auth_type: 'bearer',
     login_path: '/security/v1/auth/login',
     username: '',
+    password_env: '',
     password: '',
     api_key: '',
     api_key_header: 'X-API-Key',
+    api_key_env: '',
+    credential_mode: 'manual',
     ...partial,
   }
 }
@@ -51,7 +64,7 @@ interface WorkspaceStore {
   load: () => void
   save: () => void
   setActive: (id: string) => void
-  create: (name: string, color?: string) => Workspace
+  create: (name: string, color?: string, path?: string) => Workspace
   update: (id: string, patch: Partial<Workspace>) => void
   remove: (id: string) => void
   duplicate: (id: string) => Workspace
@@ -78,15 +91,18 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => {
 
     load: () => {
       const raw = localStorage.getItem(STORAGE_KEY)
-      let workspaces: Workspace[] = raw ? JSON.parse(raw) : []
+      let workspaces: Workspace[] = []
+      try { workspaces = raw ? JSON.parse(raw) : [] } catch { workspaces = [] }
       // Migrate from v1 format
       if (workspaces.length === 0) {
         const v1 = localStorage.getItem('postit_workspaces')
         if (v1) {
-          const old = JSON.parse(v1) as any[]
+          let old: any[] = []
+          try { old = JSON.parse(v1) } catch { old = [] }
           workspaces = old.map((o, i) => ({
             id: o.id,
             name: o.name,
+            path: o.path || '',
             color: COLORS[i % COLORS.length],
             apis: [newApiConfig({ plugin: o.plugin })],
             variables: {},
@@ -96,7 +112,7 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => {
       }
       if (workspaces.length === 0) {
         workspaces = [{
-          id: 'default', name: 'default', color: COLORS[0],
+          id: 'default', name: 'default', path: '', color: COLORS[0],
           apis: [newApiConfig()], variables: {}, created: new Date().toISOString(),
         }]
       }
@@ -115,10 +131,11 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => {
       }
     },
 
-    create: (name, color) => {
+    create: (name, color, path) => {
       const ws: Workspace = {
         id: crypto.randomUUID().slice(0, 8),
         name: name || 'untitled',
+        path: path || '',
         color: color || COLORS[get().workspaces.length % COLORS.length],
         apis: [newApiConfig()],
         variables: {},

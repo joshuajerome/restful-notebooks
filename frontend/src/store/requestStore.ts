@@ -43,7 +43,7 @@ interface RequestStore extends SessionState {
   setParams: (p: Record<string, string>) => void
   setQuery: (q: Record<string, string>) => void
   setPayload: (p: string) => void
-  execute: () => Promise<void>
+  execute: (apiAlias?: string) => Promise<void>
   switchWorkspace: (wsId: string) => void
 }
 
@@ -76,7 +76,7 @@ export const useRequestStore = create<RequestStore>((set, get) => {
       set({ currentWorkspaceId: wsId, ...session })
     },
 
-    execute: async () => {
+    execute: async (apiAlias?) => {
       const { method, endpointName, endpointPath, params, query, payload } = get()
       set({ loading: true, response: null })
       try {
@@ -86,6 +86,7 @@ export const useRequestStore = create<RequestStore>((set, get) => {
         }
         const r = await api.post('/requests/execute', {
           method, endpoint_name: endpointName, endpoint_path: endpointPath,
+          api_alias: apiAlias || '',
           params: Object.keys(params).length ? params : null,
           query: Object.keys(query).length ? query : null,
           payload: parsedPayload,

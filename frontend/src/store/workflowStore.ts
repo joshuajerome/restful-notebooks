@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 
+export type ExtractMode = 'none' | 'reference' | 'python'
+
 export interface WorkflowStep {
   id: string
   method: string
@@ -8,11 +10,16 @@ export interface WorkflowStep {
   params: Record<string, string>
   query: Record<string, string>
   payload: string
-  // Data mapping: extract from previous step response
-  extractFrom?: string  // e.g. 'response["BlueprintTemplate"][0]'
-  extractKey?: string   // e.g. 'BlueprintTemplateId'
-  injectAs?: string     // e.g. 'payload.GpuBlueprintCatalogId' or 'params.id'
   description: string
+  // Extract data config
+  extractMode: ExtractMode
+  extractReference: string   // e.g. 'response["BlueprintTemplate"][0]["BlueprintTemplateId"]'
+  extractVariableName: string // variable name to store the result
+  extractPython: string       // full python function body
+  // State
+  commented: boolean
+  response: any | null        // last run response
+  running: boolean
 }
 
 export interface Workflow {
@@ -120,6 +127,13 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
         query: {},
         payload: '{}',
         description: '',
+        extractMode: 'none',
+        extractReference: '',
+        extractVariableName: '',
+        extractPython: '',
+        commented: false,
+        response: null,
+        running: false,
         ...partial,
       }
       return { editing: { ...s.editing, steps: [...s.editing.steps, step] } }
@@ -156,8 +170,10 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
   saveEditing: () => {
     const { editing } = get()
     if (!editing) return
-    get().update(editing.id, { steps: editing.steps, name: editing.name })
-    set({ editing: null })
+    // Strip runtime state before saving
+    const cleanSteps = editing.steps.map((s) => ({ ...s, response: null, running: false }))
+    get().update(editing.id, { steps: cleanSteps, name: editing.name })
+    // Stay in editor — don't set editing to null
   },
 
   cancelEditing: () => set({ editing: null }),

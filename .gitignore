@@ -9,3 +9,4 @@ build/
 *.db
 uv.lock
 frontend/node_modules/
+plugins/
