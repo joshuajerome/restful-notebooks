@@ -9,7 +9,7 @@ import api from '../api/client'
 interface LogResponse {
   lines: string[]
   path: string
-  total_lines: number
+  total: number
 }
 
 function getLogColor(line: string): string | undefined {
@@ -34,7 +34,7 @@ export default function ObservabilityPage() {
       const res = await api.get<LogResponse>('/system/logs?tail=500')
       setLines(res.data.lines)
       setLogPath(res.data.path)
-      setTotalLines(res.data.total_lines)
+      setTotalLines(res.data.total ?? 0)
       setError(null)
     } catch (err: any) {
       setError(err?.response?.data?.detail || err.message || 'Failed to fetch logs')
@@ -109,10 +109,12 @@ export default function ObservabilityPage() {
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           sx={{ flexGrow: 1, maxWidth: 400 }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start"><Search fontSize="small" /></InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start"><Search fontSize="small" /></InputAdornment>
+              ),
+            },
           }}
         />
         <Tooltip title={autoScroll ? 'Auto-scroll ON' : 'Auto-scroll OFF'}>
