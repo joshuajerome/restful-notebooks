@@ -27,7 +27,7 @@ jobs:
         run: uv run --no-sources python -c "from app.main import app; print('Backend import OK')"
 
   frontend-checks:
-    name: Frontend Lint & Type Check
+    name: Frontend Type Check
     runs-on: ubuntu-latest
 
     steps:
@@ -52,7 +52,6 @@ jobs:
   build-macos:
     name: Build macOS App
     runs-on: macos-latest
-    if: false
     needs: [backend-tests, frontend-checks]
 
     steps:
@@ -62,22 +61,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
           version: "latest"
 
-
       - name: Build frontend
         working-directory: frontend
         run: npm ci && npm run build
 
-      - name: Install backend dependencies
+      - name: Install backend + dev dependencies
         working-directory: backend
-        run: uv sync --no-sources
+        run: uv sync --no-sources --group dev
 
       - name: Bundle backend with PyInstaller
         working-directory: backend
@@ -111,7 +107,6 @@ jobs:
   build-windows:
     name: Build Windows App
     runs-on: windows-latest
-    if: false
     needs: [backend-tests, frontend-checks]
 
     steps:
@@ -121,22 +116,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
           version: "latest"
 
-
       - name: Build frontend
         working-directory: frontend
         run: npm ci && npm run build
 
-      - name: Install backend dependencies
+      - name: Install backend + dev dependencies
         working-directory: backend
-        run: uv sync --no-sources
+        run: uv sync --no-sources --group dev
 
       - name: Bundle backend with PyInstaller
         working-directory: backend
@@ -169,7 +161,6 @@ jobs:
   build-linux:
     name: Build Linux App
     runs-on: ubuntu-latest
-    if: false
     needs: [backend-tests, frontend-checks]
 
     steps:
@@ -179,22 +170,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
           version: "latest"
 
-
       - name: Build frontend
         working-directory: frontend
         run: npm ci && npm run build
 
-      - name: Install backend dependencies
+      - name: Install backend + dev dependencies
         working-directory: backend
-        run: uv sync --no-sources
+        run: uv sync --no-sources --group dev
 
       - name: Bundle backend with PyInstaller
         working-directory: backend
@@ -228,9 +216,7 @@ jobs:
   release:
     name: GitHub Release
     runs-on: ubuntu-latest
-    needs: [backend-tests, frontend-checks]
-    # Desktop builds disabled until pyinstaller + electron-builder are properly configured
-    # needs: [backend-tests, frontend-checks, build-macos, build-windows, build-linux]
+    needs: [backend-tests, frontend-checks, build-macos, build-windows, build-linux]
 
     permissions:
       contents: write
@@ -246,10 +232,18 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets/
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           name: Restful Notebooks ${{ steps.version.outputs.tag }}
           generate_release_notes: true
+          files: |
+            release-assets/restful-notebooks-macos/*
+            release-assets/restful-notebooks-windows/*
             release-assets/restful-notebooks-linux/*

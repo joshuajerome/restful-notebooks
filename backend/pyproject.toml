@@ -23,6 +23,8 @@ restful-sdk = { path = "../../post-it", editable = true }
 dev = [
     "ruff>=0.11.0",
     "ty>=0.0.1a0",
+    "pyinstaller>=6.0",
+    "pytest>=8.0",
 ]
 
 [tool.ruff]
