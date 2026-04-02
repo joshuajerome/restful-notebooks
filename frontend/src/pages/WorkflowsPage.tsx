@@ -471,8 +471,7 @@ export default function WorkflowsPage() {
 
       {wsWorkflows.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 8 }}>
-          <Typography color="text.secondary" sx={{ mb: 2 }}>No notebooks yet</Typography>
-          <Button variant="contained" startIcon={<Add />} disabled={!active} onClick={() => setCreateOpen(true)}>Create Notebook</Button>
+          <Typography color="text.secondary">No notebooks yet</Typography>
         </Box>
       ) : (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
