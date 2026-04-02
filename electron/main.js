@@ -34,11 +34,15 @@ async function startBackend() {
   // Production: spawn the PyInstaller-built backend binary
   const port = await findFreePort();
   const userData = app.getPath("userData");
+  const binaryName = process.platform === "win32"
+    ? "restful-notebooks-server.exe"
+    : "restful-notebooks-server";
   const backendPath = path.join(
     process.resourcesPath,
     "backend",
-    "restful-notebooks-server"
+    binaryName
   );
+  console.log("[backend] binary path:", backendPath);
 
   backendProcess = spawn(backendPath, [], {
     env: {
