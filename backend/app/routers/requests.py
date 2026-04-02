@@ -48,13 +48,16 @@ def execute_request(
             raise HTTPException(status_code=400, detail=f"Unsupported method: {body.method}")
 
         # Use permissive expected_status so we always get a response (not an exception)
-        resp = method_fn(
-            endpoint,
-            params=body.params,
-            query=body.query,
-            payload=body.payload,
-            expected_status=set(range(100, 600)),
-        )
+        kwargs: dict = {
+            "params": body.params,
+            "query": body.query,
+            "expected_status": set(range(100, 600)),
+        }
+        # Only pass payload for methods that support a request body
+        if body.method.upper() in ("POST", "PUT", "DELETE", "PATCH"):
+            kwargs["payload"] = body.payload
+
+        resp = method_fn(endpoint, **kwargs)
         duration_ms = int((time.time() - start) * 1000)
 
         try:
