@@ -3,10 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 import {
   Alert, Autocomplete, Box, Breadcrumbs, Button, Card, Chip, Divider, FormControl, IconButton,
   InputLabel, Link, List, ListItemButton, ListItemText, MenuItem, Select, Stack, TextField,
-  ToggleButton, ToggleButtonGroup, Typography,
+  ToggleButton, ToggleButtonGroup, Tooltip, Typography,
 } from '@mui/material'
-import { Add, CheckCircle, Delete, FolderOpen, PlayArrow, UploadFile } from '@mui/icons-material'
-import { useWorkspaceStore, WORKSPACE_COLORS } from '../store/workspaceStore'
+import { Add, CheckCircle, Delete, FolderOpen, NetworkPing, PlayArrow, UploadFile, Visibility, VisibilityOff } from '@mui/icons-material'
+import { useWorkspaceStore, WORKSPACE_COLORS, deriveAlias } from '../store/workspaceStore'
 import { useNotificationStore } from '../store/notificationStore'
 import { useVariableStore } from '../store/variableStore'
 import { useThemeStore } from '../store/themeStore'
@@ -118,8 +118,17 @@ export default function WorkspaceConfigPage() {
 
   const isActiveWs = workspace.id === activeId
 
+  const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({})
+  const [pingResults, setPingResults] = useState<Record<string, { ok: boolean; msg: string }>>({})
+
   const updateDraftApi = (idx: number, patch: Partial<ApiConfig>) => {
-    setDraftApis((prev) => prev.map((a, i) => i === idx ? { ...a, ...patch } : a))
+    setDraftApis((prev) => prev.map((a, i) => {
+      if (i !== idx) return a
+      const updated = { ...a, ...patch }
+      // Auto-derive alias from name
+      if ('name' in patch) updated.alias = deriveAlias(patch.name || '')
+      return updated
+    }))
   }
 
   const addApi = () => {
@@ -168,16 +177,6 @@ export default function WorkspaceConfigPage() {
     await api.post('/workspace/save-config', { apis: toBackendApis(draftApis) })
   }
 
-  const handleValidate = async (cfg: ApiConfig) => {
-    try {
-      setApiStatus(cfg.id, 'Saving & validating...', 'info')
-      await ensureSaved()
-      const r = await api.post(`/plugins/validate?api_alias=${encodeURIComponent(cfg.alias)}`)
-      setApiStatus(cfg.id, `Validation passed — ${r.data?.endpoint_count || 0} endpoints`, 'success')
-    } catch (err: any) {
-      setApiStatus(cfg.id, err?.response?.data?.detail || 'Validation failed', 'error')
-    }
-  }
 
   const handleLoadEndpoints = async (cfg: ApiConfig) => {
     try {
@@ -194,7 +193,43 @@ export default function WorkspaceConfigPage() {
     try { const f = await (window as any).electronAPI?.selectFile(); if (f) updateDraftApi(idx, { source_file: f }) } catch { }
   }
   const handleBrowsePluginPath = async (idx: number) => {
-    try { const d = await (window as any).electronAPI?.selectDirectory(); if (d) updateDraftApi(idx, { plugin_path: d }) } catch { }
+    try {
+      const d = await (window as any).electronAPI?.selectDirectory()
+      if (!d) return
+      updateDraftApi(idx, { plugin_path: d })
+      // Auto-read plugin.yaml to populate plugin name
+      try {
+        const r = await api.get(`/workspace/read-file?path=${encodeURIComponent(d + '/plugin.yaml')}`)
+        const content = r.data?.content || ''
+        const nameMatch = content.match(/^name:\s*(.+)/m)
+        if (nameMatch) updateDraftApi(idx, { plugin: nameMatch[1].trim() })
+      } catch { /* no plugin.yaml or backend can't read it */ }
+    } catch { }
+  }
+
+  const handlePing = async (cfg: ApiConfig) => {
+    if (!cfg.base_url) return
+    setPingResults((prev) => ({ ...prev, [cfg.id]: { ok: false, msg: 'Pinging...' } }))
+    try {
+      const controller = new AbortController()
+      setTimeout(() => controller.abort(), 5000)
+      const r = await fetch(cfg.base_url, { method: 'HEAD', mode: 'no-cors', signal: controller.signal })
+      setPingResults((prev) => ({ ...prev, [cfg.id]: { ok: true, msg: 'Reachable' } }))
+    } catch (err: any) {
+      setPingResults((prev) => ({ ...prev, [cfg.id]: { ok: false, msg: err?.name === 'AbortError' ? 'Timeout' : 'Unreachable' } }))
+    }
+  }
+
+  const handleTestAuth = async (cfg: ApiConfig) => {
+    try {
+      setApiStatus(cfg.id, 'Testing authentication...', 'info')
+      await ensureSaved()
+      // The backend will attempt to authenticate when building the client
+      await api.post('/workspace/load', { path: workspace.path })
+      setApiStatus(cfg.id, 'Authentication configured (will test on first request)', 'success')
+    } catch (err: any) {
+      setApiStatus(cfg.id, err?.response?.data?.detail || 'Auth test failed', 'error')
+    }
   }
 
   const handleLoadEnvFile = async () => {
@@ -365,36 +400,53 @@ export default function WorkspaceConfigPage() {
             {draftApis.map((cfg, idx) => {
               const status = getStatus(cfg.id)
               const credMode = cfg.credential_mode || 'manual'
+              const orig = workspace.apis[idx]
+              const mod = (field: keyof ApiConfig) => orig && cfg[field] !== orig[field]
+              const dot = (field: keyof ApiConfig) => mod(field) ? (
+                <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#E57C23', flexShrink: 0, mt: 1 }} />
+              ) : <Box sx={{ width: 6, flexShrink: 0 }} />
+              const ping = pingResults[cfg.id]
+              const pwVisible = showPasswords[cfg.id]
+
               return (
                 <Card key={cfg.id} variant="outlined" sx={{ p: 2.5, borderColor: 'divider' }}>
                   <Typography fontWeight={600} sx={{ fontSize: INPUT_FONT, mb: 2 }}>API #{idx + 1}</Typography>
 
                   <Typography variant="overline" sx={{ fontSize: SECTION_FONT, color: 'text.secondary', letterSpacing: 1 }}>General</Typography>
                   <Stack spacing={1.5} sx={{ mb: 2, mt: 0.5 }}>
-                    <Stack direction="row" spacing={1}>
+                    <Stack direction="row" spacing={1} alignItems="flex-start">
+                      {dot('name')}
                       <TextField size="small" label="Name" value={cfg.name} onChange={(e) => updateDraftApi(idx, { name: e.target.value })}
                         sx={{ flex: 1 }} inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }} />
-                      <TextField size="small" label="Alias" value={cfg.alias} onChange={(e) => updateDraftApi(idx, { alias: e.target.value })}
-                        sx={{ flex: 1 }} inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
-                        helperText="ctx.clients.<alias>" FormHelperTextProps={{ sx: { fontSize: HELPER_FONT } }} />
+                      <TextField size="small" label="Alias" value={cfg.alias} disabled
+                        sx={{ flex: 1, '& .Mui-disabled': { WebkitTextFillColor: 'text.secondary' } }}
+                        inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
+                        helperText="Auto-derived from name" FormHelperTextProps={{ sx: { fontSize: HELPER_FONT } }} />
                     </Stack>
                   </Stack>
                   <Divider sx={{ my: 1.5 }} />
 
                   <Typography variant="overline" sx={{ fontSize: SECTION_FONT, color: 'text.secondary', letterSpacing: 1 }}>Plugin</Typography>
                   <Stack spacing={1.5} sx={{ mb: 2, mt: 0.5 }}>
-                    <TextField size="small" label="Plugin Name" value={cfg.plugin} onChange={(e) => updateDraftApi(idx, { plugin: e.target.value })}
-                      fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
-                      helperText="Adapter name from plugin's adapter.py" FormHelperTextProps={{ sx: { fontSize: HELPER_FONT } }} />
                     <Stack direction="row" spacing={1} alignItems="flex-start">
+                      {dot('plugin')}
+                      <TextField size="small" label="Plugin Name" value={cfg.plugin} disabled
+                        fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
+                        helperText="Auto-populated from plugin.yaml" FormHelperTextProps={{ sx: { fontSize: HELPER_FONT } }} />
+                    </Stack>
+                    <Stack direction="row" spacing={1} alignItems="flex-start">
+                      {dot('source_file')}
                       <TextField size="small" label="Source File" value={cfg.source_file} onChange={(e) => updateDraftApi(idx, { source_file: e.target.value })}
                         fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
-                        helperText="File the plugin parses to generate endpoints (e.g. rbac_access_matrix.json)" FormHelperTextProps={{ sx: { fontSize: HELPER_FONT } }} />
+                        sx={cfg.source_file ? { '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#38A169' } } } : {}}
+                        helperText="File the plugin parses to generate endpoints" FormHelperTextProps={{ sx: { fontSize: HELPER_FONT } }} />
                       <IconButton size="small" onClick={() => handleBrowseFile(idx)} sx={{ mt: 0.5 }}><FolderOpen sx={{ fontSize: 20 }} /></IconButton>
                     </Stack>
                     <Stack direction="row" spacing={1} alignItems="flex-start">
+                      {dot('plugin_path')}
                       <TextField size="small" label="Plugin Path" value={cfg.plugin_path} onChange={(e) => updateDraftApi(idx, { plugin_path: e.target.value })}
                         fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
+                        sx={cfg.plugin_path ? { '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#38A169' } } } : {}}
                         helperText="Directory containing plugin.yaml + adapter.py" FormHelperTextProps={{ sx: { fontSize: HELPER_FONT } }} />
                       <IconButton size="small" onClick={() => handleBrowsePluginPath(idx)} sx={{ mt: 0.5 }}><FolderOpen sx={{ fontSize: 20 }} /></IconButton>
                     </Stack>
@@ -403,31 +455,49 @@ export default function WorkspaceConfigPage() {
 
                   <Typography variant="overline" sx={{ fontSize: SECTION_FONT, color: 'text.secondary', letterSpacing: 1 }}>API Connection</Typography>
                   <Stack spacing={1.5} sx={{ mb: 2, mt: 0.5 }}>
-                    <TextField size="small" label="Base URL" value={cfg.base_url} onChange={(e) => updateDraftApi(idx, { base_url: e.target.value })}
-                      fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
-                      placeholder="https://api.example.com" />
+                    <Stack direction="row" spacing={1} alignItems="flex-start">
+                      {dot('base_url')}
+                      <TextField size="small" label="Base URL" value={cfg.base_url} onChange={(e) => updateDraftApi(idx, { base_url: e.target.value })}
+                        fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
+                        placeholder="https://api.example.com" />
+                      <Tooltip title={ping ? ping.msg : 'Ping base URL'}>
+                        <IconButton size="small" onClick={() => handlePing(cfg)} sx={{ mt: 0.5, color: ping?.ok ? 'success.main' : ping ? 'error.main' : 'text.secondary' }}>
+                          <NetworkPing sx={{ fontSize: 18 }} />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
                   </Stack>
                   <Divider sx={{ my: 1.5 }} />
 
                   <Typography variant="overline" sx={{ fontSize: SECTION_FONT, color: 'text.secondary', letterSpacing: 1 }}>Authentication</Typography>
                   <Stack spacing={1.5} sx={{ mb: 2, mt: 0.5 }}>
-                    <FormControl size="small" fullWidth>
-                      <InputLabel sx={{ fontSize: LABEL_FONT }}>Auth Type</InputLabel>
-                      <Select value={cfg.auth_type} label="Auth Type"
-                        onChange={(e) => updateDraftApi(idx, { auth_type: e.target.value as ApiConfig['auth_type'] })}
-                        sx={{ fontSize: INPUT_FONT }}>
-                        <MenuItem value="bearer">Bearer Token</MenuItem>
-                        <MenuItem value="apikey">API Key</MenuItem>
-                        <MenuItem value="none">None</MenuItem>
-                      </Select>
-                    </FormControl>
+                    <Stack direction="row" spacing={1} alignItems="flex-start">
+                      {dot('auth_type')}
+                      <FormControl size="small" fullWidth>
+                        <InputLabel sx={{ fontSize: LABEL_FONT }}>Auth Type</InputLabel>
+                        <Select value={cfg.auth_type} label="Auth Type"
+                          onChange={(e) => updateDraftApi(idx, { auth_type: e.target.value as ApiConfig['auth_type'] })}
+                          sx={{ fontSize: INPUT_FONT }}>
+                          <MenuItem value="bearer">Bearer Token</MenuItem>
+                          <MenuItem value="apikey">API Key</MenuItem>
+                          <MenuItem value="none">None</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Stack>
 
                     {cfg.auth_type === 'bearer' && (<>
-                      <TextField size="small" label="Login Path" value={cfg.login_path} onChange={(e) => updateDraftApi(idx, { login_path: e.target.value })}
-                        fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }} />
-                      <TextField size="small" label="Username" value={cfg.username} onChange={(e) => updateDraftApi(idx, { username: e.target.value })}
-                        fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }} />
+                      <Stack direction="row" spacing={1} alignItems="flex-start">
+                        {dot('login_path')}
+                        <TextField size="small" label="Login Path" value={cfg.login_path} onChange={(e) => updateDraftApi(idx, { login_path: e.target.value })}
+                          fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }} />
+                      </Stack>
+                      <Stack direction="row" spacing={1} alignItems="flex-start">
+                        {dot('username')}
+                        <TextField size="small" label="Username" value={cfg.username} onChange={(e) => updateDraftApi(idx, { username: e.target.value })}
+                          fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }} />
+                      </Stack>
                       <Stack direction="row" alignItems="center" spacing={1}>
+                        <Box sx={{ width: 6, flexShrink: 0 }} />
                         <Typography sx={{ fontSize: HELPER_FONT, color: 'text.secondary' }}>Password:</Typography>
                         <ToggleButtonGroup size="small" exclusive value={credMode}
                           onChange={(_, v) => v && updateDraftApi(idx, { credential_mode: v })}
@@ -436,23 +506,39 @@ export default function WorkspaceConfigPage() {
                           <ToggleButton value="env">Env Variable</ToggleButton>
                         </ToggleButtonGroup>
                       </Stack>
-                      {credMode === 'manual' ? (
-                        <TextField size="small" label="Password" value={cfg.password} onChange={(e) => updateDraftApi(idx, { password: e.target.value })}
-                          fullWidth type="password" inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }} />
-                      ) : (
-                        <Autocomplete size="small" freeSolo options={envKeys} value={cfg.password_env}
-                          onInputChange={(_, v) => updateDraftApi(idx, { password_env: v })}
-                          renderInput={(params) => <TextField {...params} label="Password Env Variable"
-                            inputProps={{ ...params.inputProps, style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
-                            helperText={envKeys.length ? 'Select from .env or type manually' : 'Load .env above'}
-                            FormHelperTextProps={{ sx: { fontSize: HELPER_FONT } }} />} />
-                      )}
+                      <Stack direction="row" spacing={1} alignItems="flex-start">
+                        {dot('password')}
+                        {credMode === 'manual' ? (
+                          <TextField size="small" label="Password" value={cfg.password} onChange={(e) => updateDraftApi(idx, { password: e.target.value })}
+                            fullWidth type={pwVisible ? 'text' : 'password'}
+                            inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
+                            slotProps={{ input: { endAdornment: (
+                              <IconButton size="small" onClick={() => setShowPasswords((p) => ({ ...p, [cfg.id]: !p[cfg.id] }))}>
+                                {pwVisible ? <VisibilityOff sx={{ fontSize: 18 }} /> : <Visibility sx={{ fontSize: 18 }} />}
+                              </IconButton>
+                            ) } }} />
+                        ) : (
+                          <Autocomplete size="small" freeSolo fullWidth options={envKeys} value={cfg.password_env}
+                            onInputChange={(_, v) => updateDraftApi(idx, { password_env: v })}
+                            renderInput={(params) => <TextField {...params} label="Password Env Variable"
+                              inputProps={{ ...params.inputProps, style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
+                              helperText={envKeys.length ? 'Select from .env or type manually' : 'Load .env above'}
+                              FormHelperTextProps={{ sx: { fontSize: HELPER_FONT } }} />} />
+                        )}
+                      </Stack>
+                      <Stack direction="row" spacing={1} sx={{ pl: '14px' }}>
+                        <Button size="small" variant="outlined" onClick={() => handleTestAuth(cfg)}>Test Authentication</Button>
+                      </Stack>
                     </>)}
 
                     {cfg.auth_type === 'apikey' && (<>
-                      <TextField size="small" label="Header" value={cfg.api_key_header} onChange={(e) => updateDraftApi(idx, { api_key_header: e.target.value })}
-                        fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }} />
+                      <Stack direction="row" spacing={1} alignItems="flex-start">
+                        {dot('api_key_header')}
+                        <TextField size="small" label="Header" value={cfg.api_key_header} onChange={(e) => updateDraftApi(idx, { api_key_header: e.target.value })}
+                          fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }} />
+                      </Stack>
                       <Stack direction="row" alignItems="center" spacing={1}>
+                        <Box sx={{ width: 6, flexShrink: 0 }} />
                         <Typography sx={{ fontSize: HELPER_FONT, color: 'text.secondary' }}>Key:</Typography>
                         <ToggleButtonGroup size="small" exclusive value={credMode}
                           onChange={(_, v) => v && updateDraftApi(idx, { credential_mode: v })}
@@ -461,24 +547,31 @@ export default function WorkspaceConfigPage() {
                           <ToggleButton value="env">Env Variable</ToggleButton>
                         </ToggleButtonGroup>
                       </Stack>
-                      {credMode === 'manual' ? (
-                        <TextField size="small" label="API Key" value={cfg.api_key} onChange={(e) => updateDraftApi(idx, { api_key: e.target.value })}
-                          fullWidth type="password" inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }} />
-                      ) : (
-                        <Autocomplete size="small" freeSolo options={envKeys} value={cfg.api_key_env}
-                          onInputChange={(_, v) => updateDraftApi(idx, { api_key_env: v })}
-                          renderInput={(params) => <TextField {...params} label="API Key Env Variable"
-                            inputProps={{ ...params.inputProps, style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
-                            helperText={envKeys.length ? 'Select from .env or type manually' : 'Load .env above'}
-                            FormHelperTextProps={{ sx: { fontSize: HELPER_FONT } }} />} />
-                      )}
+                      <Stack direction="row" spacing={1} alignItems="flex-start">
+                        {dot('api_key')}
+                        {credMode === 'manual' ? (
+                          <TextField size="small" label="API Key" value={cfg.api_key} onChange={(e) => updateDraftApi(idx, { api_key: e.target.value })}
+                            fullWidth type={pwVisible ? 'text' : 'password'}
+                            inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
+                            slotProps={{ input: { endAdornment: (
+                              <IconButton size="small" onClick={() => setShowPasswords((p) => ({ ...p, [cfg.id]: !p[cfg.id] }))}>
+                                {pwVisible ? <VisibilityOff sx={{ fontSize: 18 }} /> : <Visibility sx={{ fontSize: 18 }} />}
+                              </IconButton>
+                            ) } }} />
+                        ) : (
+                          <Autocomplete size="small" freeSolo fullWidth options={envKeys} value={cfg.api_key_env}
+                            onInputChange={(_, v) => updateDraftApi(idx, { api_key_env: v })}
+                            renderInput={(params) => <TextField {...params} label="API Key Env Variable"
+                              inputProps={{ ...params.inputProps, style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
+                              helperText={envKeys.length ? 'Select from .env or type manually' : 'Load .env above'}
+                              FormHelperTextProps={{ sx: { fontSize: HELPER_FONT } }} />} />
+                        )}
+                      </Stack>
                     </>)}
                   </Stack>
                   <Divider sx={{ my: 1 }} />
 
                   <Stack direction="row" spacing={1} alignItems="center">
-                    <Button size="small" variant="outlined" startIcon={<CheckCircle sx={{ fontSize: 16 }} />}
-                      onClick={() => handleValidate(cfg)}>Validate</Button>
                     <Button size="small" variant="outlined" startIcon={<PlayArrow sx={{ fontSize: 16 }} />}
                       onClick={() => handleLoadEndpoints(cfg)}>Load Endpoints</Button>
                     <Box sx={{ flex: 1 }} />
@@ -537,13 +630,11 @@ export default function WorkspaceConfigPage() {
         </Box>
       </Box>
 
-      {/* Save/Cancel — no background, aligned with content */}
-      {isDirty && (
-        <Box sx={{ maxWidth: 800, pl: '184px', py: 1.5, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-          <Button size="small" onClick={handleCancel}>Cancel</Button>
-          <Button size="small" variant="contained" onClick={handleSave}>Save</Button>
-        </Box>
-      )}
+      {/* Save/Cancel — always visible, save disabled when clean */}
+      <Box sx={{ maxWidth: 800, pl: '184px', py: 1.5, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+        <Button size="small" onClick={handleCancel} disabled={!isDirty}>Cancel</Button>
+        <Button size="small" variant="contained" onClick={handleSave} disabled={!isDirty}>Save</Button>
+      </Box>
     </Box>
   )
 }

@@ -34,6 +34,11 @@ const ACTIVE_KEY = 'restful_active_workspace'
 
 const COLORS = ['#1D63ED', '#38A169', '#C77D1A', '#C53030', '#319795', '#805AD5', '#D53F8C', '#718096']
 
+/** Derive alias from API name: lowercase, trim, replace spaces/hyphens with underscores, strip non-alphanumeric. */
+export function deriveAlias(name: string): string {
+  return name.trim().toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '') || 'api'
+}
+
 function newApiConfig(partial?: Partial<ApiConfig>): ApiConfig {
   return {
     id: crypto.randomUUID().slice(0, 8),
@@ -93,32 +98,37 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => {
       const raw = localStorage.getItem(STORAGE_KEY)
       let workspaces: Workspace[] = []
       try { workspaces = raw ? JSON.parse(raw) : [] } catch { workspaces = [] }
-      // Migrate from v1 format
-      if (workspaces.length === 0) {
-        const v1 = localStorage.getItem('postit_workspaces')
-        if (v1) {
-          let old: any[] = []
-          try { old = JSON.parse(v1) } catch { old = [] }
-          workspaces = old.map((o, i) => ({
-            id: o.id,
-            name: o.name,
-            path: o.path || '',
-            color: COLORS[i % COLORS.length],
-            apis: [newApiConfig({ plugin: o.plugin })],
-            variables: {},
-            created: o.created,
-          }))
+
+      // Sync with backend — discover workspaces on disk that aren't in localStorage
+      fetch('/api/workspace/list').then((r) => r.json()).then((diskWs: { name: string; path: string }[]) => {
+        const { workspaces: current } = get()
+        const knownPaths = new Set(current.map((w) => w.path).filter(Boolean))
+        let added = false
+        for (const dw of diskWs) {
+          if (!knownPaths.has(dw.path)) {
+            current.push({
+              id: crypto.randomUUID().slice(0, 8),
+              name: dw.name,
+              path: dw.path,
+              color: COLORS[current.length % COLORS.length],
+              apis: [], variables: {},
+              created: new Date().toISOString(),
+            })
+            added = true
+          }
         }
-      }
+        if (added) {
+          set({ workspaces: [...current] })
+          persist()
+        }
+      }).catch(() => { /* backend not available */ })
+
       if (workspaces.length === 0) {
-        workspaces = [{
-          id: 'default', name: 'default', path: '', color: COLORS[0],
-          apis: [newApiConfig()], variables: {}, created: new Date().toISOString(),
-        }]
+        workspaces = []
       }
-      const activeId = localStorage.getItem(ACTIVE_KEY) || workspaces[0].id
-      set({ workspaces, activeId, active: workspaces.find((w) => w.id === activeId) || workspaces[0] })
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(workspaces))
+      const activeId = localStorage.getItem(ACTIVE_KEY) || (workspaces[0]?.id ?? null)
+      set({ workspaces, activeId, active: workspaces.find((w) => w.id === activeId) || null })
+      if (workspaces.length > 0) localStorage.setItem(STORAGE_KEY, JSON.stringify(workspaces))
     },
 
     save: persist,

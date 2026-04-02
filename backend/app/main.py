@@ -18,10 +18,24 @@ from app.routers import endpoints, plugins, requests, workflow, workspace
 from app.services.workspace_manager import WorkspaceManager
 
 
+def get_data_dir() -> Path:
+    """Return platform-appropriate data directory for Restful Notebooks."""
+    import platform
+    system = platform.system()
+    if system == "Windows":
+        base = Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming"))
+    elif system == "Darwin":
+        base = Path.home() / "Library" / "Application Support"
+    else:
+        base = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
+    data_dir = base / "restful"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir
+
+
 def setup_logging() -> None:
     """Configure file-based logging with rotation."""
-    log_dir = Path.home() / ".restful"
-    log_dir.mkdir(parents=True, exist_ok=True)
+    log_dir = get_data_dir()
     log_path = log_dir / "restful-notebooks.log"
 
     handler = RotatingFileHandler(
@@ -94,7 +108,7 @@ def health():
 @app.get("/api/system/logs")
 def get_logs(tail: int = 200):
     """Return last N lines from the log file."""
-    log_path = Path.home() / ".restful" / "restful-notebooks.log"
+    log_path = get_data_dir() / "restful-notebooks.log"
     if not log_path.exists():
         return {"lines": [], "path": str(log_path), "total": 0}
     with log_path.open("r", encoding="utf-8", errors="replace") as f:
@@ -106,7 +120,7 @@ def get_logs(tail: int = 200):
 @app.get("/api/system/log-path")
 def get_log_path():
     """Return the path to the log file."""
-    log_path = Path.home() / ".restful" / "restful-notebooks.log"
+    log_path = get_data_dir() / "restful-notebooks.log"
     return {"path": str(log_path), "exists": log_path.exists()}
 
 

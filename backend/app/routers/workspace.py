@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import yaml
@@ -77,6 +78,21 @@ class CreateResponse(BaseModel):
 # --- Helpers ---
 
 
+def get_data_dir() -> Path:
+    """Return platform-appropriate data directory for Restful Notebooks."""
+    import platform
+    system = platform.system()
+    if system == "Windows":
+        base = Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming"))
+    elif system == "Darwin":
+        base = Path.home() / "Library" / "Application Support"
+    else:
+        base = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
+    data_dir = base / "restful"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir
+
+
 def _build_workspace_info(mgr: WorkspaceManager) -> WorkspaceInfo:
     """Build WorkspaceInfo from the current manager state."""
     if mgr.config is None:
@@ -134,9 +150,42 @@ def _write_config_yaml(config_path: Path, workspace_name: str, apis: list[ApiCon
 @router.get("/default-parent")
 def get_default_parent():
     """Return the default parent directory for new workspaces."""
-    home = Path.home() / ".restful" / "workspaces"
-    home.mkdir(parents=True, exist_ok=True)
-    return {"path": str(home)}
+    ws_dir = get_data_dir() / "workspaces"
+    ws_dir.mkdir(parents=True, exist_ok=True)
+    return {"path": str(ws_dir)}
+
+
+@router.get("/read-file")
+def read_file(path: str):
+    """Read a text file and return its content. Used by frontend for plugin.yaml etc."""
+    p = Path(path)
+    if not p.exists():
+        raise HTTPException(status_code=404, detail=f"File not found: {path}")
+    if not p.is_file():
+        raise HTTPException(status_code=400, detail=f"Not a file: {path}")
+    try:
+        return {"content": p.read_text(encoding="utf-8", errors="replace")}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/list")
+def list_workspaces():
+    """List all workspaces in the default directory."""
+    ws_dir = get_data_dir() / "workspaces"
+    ws_dir.mkdir(parents=True, exist_ok=True)
+    workspaces = []
+    for d in sorted(ws_dir.iterdir()):
+        if not d.is_dir():
+            continue
+        configs = list(d.glob("*.config.yaml"))
+        if configs:
+            workspaces.append({
+                "name": d.name,
+                "path": str(d),
+                "config": str(configs[0]),
+            })
+    return workspaces
 
 
 @router.get("", response_model=WorkspaceInfo)
