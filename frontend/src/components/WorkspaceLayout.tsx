@@ -173,7 +173,8 @@ export default function WorkspaceLayout() {
           pr: isWindows ? '140px !important' : '16px !important',
         }}>
           <Box onClick={() => navTo('/workspaces')} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', mr: 1, WebkitAppRegion: 'no-drag' }}>
-            <DataObject sx={{ mr: 0.5, color: '#fff', fontSize: 20 }} />
+            <Box component="img" src="/logo.png" alt="" sx={{ width: 20, height: 20, mr: 0.5, objectFit: 'contain' }}
+              onError={(e: React.SyntheticEvent<HTMLImageElement>) => { e.currentTarget.style.display = 'none' }} />
             <Typography noWrap sx={{ fontWeight: 700, fontSize: 15, color: '#fff' }}>Restful</Typography>
           </Box>
 

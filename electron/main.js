@@ -118,6 +118,7 @@ function createWindow(port) {
     height: 860,
     minWidth: 900,
     minHeight: 600,
+    icon: path.join(__dirname, "icons", "icon.png"),
     titleBarStyle: isMac ? "hiddenInset" : "hidden",
     trafficLightPosition: isMac ? { x: 16, y: 20 } : undefined,
     titleBarOverlay: !isMac
