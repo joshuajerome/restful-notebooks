@@ -6,8 +6,12 @@ from contextlib import asynccontextmanager
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
+import sys
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 from app.database import init_db
 from app.routers import endpoints, plugins, requests, workflow, workspace
@@ -76,6 +80,7 @@ app.include_router(workflow.router)
 app.include_router(plugins.router)
 
 
+
 @app.get("/api/health")
 def health():
     mgr: WorkspaceManager = app.state.ws
@@ -103,3 +108,26 @@ def get_log_path():
     """Return the path to the log file."""
     log_path = Path.home() / ".restful" / "restful-notebooks.log"
     return {"path": str(log_path), "exists": log_path.exists()}
+
+
+# ── Static file serving (production) ─────────────────────────────────────
+# Must be AFTER all API routes to avoid shadowing them.
+_static_dir = None
+if getattr(sys, "frozen", False):
+    _static_dir = Path(sys._MEIPASS) / "static"
+
+if _static_dir and _static_dir.is_dir():
+    # Serve /assets, /logo.png, etc.
+    app.mount("/assets", StaticFiles(directory=str(_static_dir / "assets")), name="static-assets")
+
+    @app.get("/")
+    @app.get("/app/{full_path:path}")
+    def serve_spa(full_path: str = ""):
+        return FileResponse(str(_static_dir / "index.html"))
+
+    @app.get("/{filename:path}")
+    def serve_static(filename: str):
+        fp = _static_dir / filename
+        if fp.is_file():
+            return FileResponse(str(fp))
+        return FileResponse(str(_static_dir / "index.html"))
