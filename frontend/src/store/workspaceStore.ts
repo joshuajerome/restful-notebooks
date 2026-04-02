@@ -123,12 +123,13 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => {
         }
       }).catch(() => { /* backend not available */ })
 
-      if (workspaces.length === 0) {
-        workspaces = []
-      }
-      const activeId = localStorage.getItem(ACTIVE_KEY) || (workspaces[0]?.id ?? null)
+      // Auto-activate if only one workspace
+      let activeId = localStorage.getItem(ACTIVE_KEY) || null
+      if (!activeId && workspaces.length === 1) activeId = workspaces[0].id
+      else if (!activeId && workspaces.length > 0) activeId = workspaces[0].id
       set({ workspaces, activeId, active: workspaces.find((w) => w.id === activeId) || null })
       if (workspaces.length > 0) localStorage.setItem(STORAGE_KEY, JSON.stringify(workspaces))
+      if (activeId) localStorage.setItem(ACTIVE_KEY, activeId)
     },
 
     save: persist,

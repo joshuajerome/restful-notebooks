@@ -326,9 +326,15 @@ export default function WorkspaceLayout() {
           height: FOOTER_HEIGHT, minHeight: FOOTER_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           px: 2, borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper',
         }}>
-          <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>
-            {active ? active.name : 'no workspace'} — restful v0.0.1 — Restful Notebooks v0.0.1{isDev ? ' DEV' : ''}
-          </Typography>
+          {/* Left: restful-sdk version + status */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: backendConnected ? 'success.main' : 'error.main' }} />
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>
+              restful-sdk v0.0.1
+            </Typography>
+          </Box>
+
+          {/* Right: version + update + dev info */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             {updateAvailable && (
               <Tooltip title={updateReady ? 'Click to install and restart' : `v${updateAvailable} downloading...`}>
@@ -343,12 +349,17 @@ export default function WorkspaceLayout() {
                 </Button>
               </Tooltip>
             )}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: backendConnected ? 'success.main' : 'error.main' }} />
-              <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>
-                {backendConnected ? `Backend connected${backendWorkspace ? ` (${backendWorkspace})` : ''}` : 'Backend disconnected'}
-              </Typography>
-            </Box>
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>
+              Restful Notebooks v0.0.3{isDev ? ' DEV' : ''}
+            </Typography>
+            {isDev && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: backendConnected ? 'success.main' : 'error.main' }} />
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>
+                  {backendConnected ? 'Backend connected' : 'Backend disconnected'}
+                </Typography>
+              </Box>
+            )}
           </Box>
         </Box>
       </Box>

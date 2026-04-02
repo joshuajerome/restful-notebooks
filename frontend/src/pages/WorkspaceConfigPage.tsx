@@ -5,7 +5,7 @@ import {
   InputLabel, Link, List, ListItemButton, ListItemText, MenuItem, Select, Stack, TextField,
   ToggleButton, ToggleButtonGroup, Tooltip, Typography,
 } from '@mui/material'
-import { Add, CheckCircle, Delete, FolderOpen, NetworkPing, PlayArrow, UploadFile, Visibility, VisibilityOff } from '@mui/icons-material'
+import { Add, CheckCircle, Delete, FolderOpen, NetworkPing, PlayArrow, Send, UploadFile, Visibility, VisibilityOff } from '@mui/icons-material'
 import { useWorkspaceStore, WORKSPACE_COLORS, deriveAlias } from '../store/workspaceStore'
 import { useNotificationStore } from '../store/notificationStore'
 import { useVariableStore } from '../store/variableStore'
@@ -211,24 +211,23 @@ export default function WorkspaceConfigPage() {
     if (!cfg.base_url) return
     setPingResults((prev) => ({ ...prev, [cfg.id]: { ok: false, msg: 'Pinging...' } }))
     try {
-      const controller = new AbortController()
-      setTimeout(() => controller.abort(), 5000)
-      const r = await fetch(cfg.base_url, { method: 'HEAD', mode: 'no-cors', signal: controller.signal })
-      setPingResults((prev) => ({ ...prev, [cfg.id]: { ok: true, msg: 'Reachable' } }))
+      // Use backend as proxy to avoid CORS/TLS issues
+      const r = await api.post('/workspace/ping', { url: cfg.base_url })
+      setPingResults((prev) => ({ ...prev, [cfg.id]: { ok: r.data?.ok, msg: r.data?.msg || 'Done' } }))
     } catch (err: any) {
-      setPingResults((prev) => ({ ...prev, [cfg.id]: { ok: false, msg: err?.name === 'AbortError' ? 'Timeout' : 'Unreachable' } }))
+      const msg = err?.response?.data?.detail || err?.response?.data?.msg || 'Unreachable'
+      setPingResults((prev) => ({ ...prev, [cfg.id]: { ok: false, msg } }))
     }
   }
 
-  const handleTestAuth = async (cfg: ApiConfig) => {
+  const handleAuthenticate = async (cfg: ApiConfig) => {
     try {
-      setApiStatus(cfg.id, 'Testing authentication...', 'info')
+      setApiStatus(cfg.id, 'Authenticating...', 'info')
       await ensureSaved()
-      // The backend will attempt to authenticate when building the client
-      await api.post('/workspace/load', { path: workspace.path })
-      setApiStatus(cfg.id, 'Authentication configured (will test on first request)', 'success')
+      const r = await api.post('/workspace/test-auth', { api_alias: cfg.alias })
+      setApiStatus(cfg.id, r.data?.msg || 'Authenticated', 'success')
     } catch (err: any) {
-      setApiStatus(cfg.id, err?.response?.data?.detail || 'Auth test failed', 'error')
+      setApiStatus(cfg.id, err?.response?.data?.detail || 'Authentication failed', 'error')
     }
   }
 
@@ -527,7 +526,8 @@ export default function WorkspaceConfigPage() {
                         )}
                       </Stack>
                       <Stack direction="row" spacing={1} sx={{ pl: '14px' }}>
-                        <Button size="small" variant="outlined" onClick={() => handleTestAuth(cfg)}>Test Authentication</Button>
+                        <Button size="small" variant="outlined" startIcon={<Send sx={{ fontSize: 14 }} />}
+                          onClick={() => handleAuthenticate(cfg)}>Authenticate</Button>
                       </Stack>
                     </>)}
 

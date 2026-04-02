@@ -169,6 +169,50 @@ def read_file(path: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+class PingBody(BaseModel):
+    url: str
+
+
+class TestAuthBody(BaseModel):
+    api_alias: str
+
+
+@router.post("/ping")
+def ping_url(body: PingBody):
+    """Ping a URL to test connectivity. Handles self-signed TLS."""
+    import requests as req
+    try:
+        r = req.head(body.url, timeout=5, verify=False, allow_redirects=True)
+        return {"ok": True, "msg": f"Reachable ({r.status_code})"}
+    except req.ConnectionError:
+        return {"ok": False, "msg": "Connection refused"}
+    except req.Timeout:
+        return {"ok": False, "msg": "Timeout (5s)"}
+    except Exception as e:
+        return {"ok": False, "msg": str(e)[:100]}
+
+
+@router.post("/test-auth")
+def test_auth(body: TestAuthBody, mgr: WorkspaceManager = Depends(get_ws)):
+    """Test authentication by triggering a login for the specified API."""
+    api_cfg = mgr.config.get_api(body.api_alias)
+    if not api_cfg:
+        raise HTTPException(status_code=404, detail=f"API '{body.api_alias}' not found")
+
+    client = mgr.get_client(body.api_alias)
+
+    # Force auth to refresh by getting headers (triggers login for bearer)
+    try:
+        if hasattr(client, '_auth') and client._auth and hasattr(client._auth, 'auth_headers'):
+            headers = client._auth.auth_headers()
+            if headers:
+                return {"ok": True, "msg": "Authenticated successfully"}
+            return {"ok": False, "msg": "No auth headers returned"}
+        return {"ok": True, "msg": "No auth configured for this API"}
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Authentication failed: {e}")
+
+
 @router.get("/list")
 def list_workspaces():
     """List all workspaces in the default directory."""
