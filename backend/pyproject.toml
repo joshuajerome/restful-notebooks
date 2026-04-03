@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "restful-notebooks-backend"
-version = "0.0.4"
+version = "0.0.5"
 description = "Restful Notebooks backend"
 requires-python = ">=3.10"
 dependencies = [
