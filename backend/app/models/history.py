@@ -22,4 +22,6 @@ class RequestHistory(Base):
     response_status: Mapped[int] = mapped_column(Integer)
     response_body: Mapped[str] = mapped_column(Text)
     duration_ms: Mapped[int] = mapped_column(Integer, default=0)
+    workspace_name: Mapped[str] = mapped_column(String(255), default="")
+    notebook_name: Mapped[str] = mapped_column(String(255), default="")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

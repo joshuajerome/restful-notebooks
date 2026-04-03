@@ -8,7 +8,7 @@ from app.services.workspace_manager import WorkspaceManager
 from restful.workflow.context import ClientNamespace, WorkflowContext
 from restful.workflow.runner import StageResult, WorkflowRunner
 
-router = APIRouter(prefix="/api/workflows", tags=["workflows"])
+router = APIRouter(prefix="/api/workflows", tags=["notebooks"])
 
 
 # --- Response schemas ---
@@ -63,7 +63,7 @@ def _stage_result_to_response(r: StageResult) -> StageResultResponse:
 @router.get("", response_model=list[WorkflowListItem])
 def list_workflows(mgr: WorkspaceManager = Depends(get_ws)):
     """List .py files in the workspace workflows/ directory."""
-    workflows_dir = mgr.config.root / "workflows"
+    workflows_dir = mgr.config.root / "notebooks"
     if not workflows_dir.is_dir():
         return []
 
@@ -77,7 +77,7 @@ def list_workflows(mgr: WorkspaceManager = Depends(get_ws)):
 @router.get("/{name}/stages", response_model=list[StageInfo])
 def get_stages(name: str, mgr: WorkspaceManager = Depends(get_ws)):
     """Return the stages defined in a workflow file."""
-    workflow_path = mgr.config.root / "workflows" / f"{name}.py"
+    workflow_path = mgr.config.root / "notebooks" / f"{name}.py"
     if not workflow_path.exists():
         raise HTTPException(status_code=404, detail=f"Workflow '{name}' not found")
 
@@ -91,7 +91,7 @@ def get_stages(name: str, mgr: WorkspaceManager = Depends(get_ws)):
 @router.post("/{name}/run", response_model=list[StageResultResponse])
 def run_workflow(name: str, mgr: WorkspaceManager = Depends(get_ws)):
     """Run all stages in a workflow."""
-    workflow_path = mgr.config.root / "workflows" / f"{name}.py"
+    workflow_path = mgr.config.root / "notebooks" / f"{name}.py"
     if not workflow_path.exists():
         raise HTTPException(status_code=404, detail=f"Workflow '{name}' not found")
 
@@ -105,7 +105,7 @@ def run_workflow(name: str, mgr: WorkspaceManager = Depends(get_ws)):
 @router.post("/{name}/run-stage", response_model=StageResultResponse)
 def run_stage(name: str, body: RunStageBody, mgr: WorkspaceManager = Depends(get_ws)):
     """Run a single stage in a workflow by name."""
-    workflow_path = mgr.config.root / "workflows" / f"{name}.py"
+    workflow_path = mgr.config.root / "notebooks" / f"{name}.py"
     if not workflow_path.exists():
         raise HTTPException(status_code=404, detail=f"Workflow '{name}' not found")
 

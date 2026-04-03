@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog, shell } = require("electron");
 const path = require("path");
 const http = require("http");
 const { spawn } = require("child_process");
@@ -212,6 +212,10 @@ ipcMain.handle("install-update", () => {
     autoUpdater.quitAndInstall();
   }
 });
+ipcMain.handle("show-item-in-folder", (_, filePath) => {
+  shell.showItemInFolder(filePath);
+});
+
 ipcMain.handle("check-for-updates", () => {
   if (!IS_DEV) {
     const { autoUpdater } = require("electron-updater");

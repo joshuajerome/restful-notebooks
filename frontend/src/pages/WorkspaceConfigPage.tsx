@@ -5,7 +5,7 @@ import {
   InputLabel, Link, List, ListItemButton, ListItemText, MenuItem, Select, Stack, TextField,
   ToggleButton, ToggleButtonGroup, Tooltip, Typography,
 } from '@mui/material'
-import { Add, CheckCircle, Delete, FolderOpen, NetworkPing, PlayArrow, Send, UploadFile, Visibility, VisibilityOff } from '@mui/icons-material'
+import { Add, CheckCircle, Delete, Download, DriveFileMove, FolderOpen, NetworkPing, PlayArrow, Send, UploadFile, Visibility, VisibilityOff } from '@mui/icons-material'
 import { useWorkspaceStore, WORKSPACE_COLORS, deriveAlias } from '../store/workspaceStore'
 import { useNotificationStore } from '../store/notificationStore'
 import { useVariableStore } from '../store/variableStore'
@@ -246,6 +246,40 @@ export default function WorkspaceConfigPage() {
     } catch { notify('Failed to load env file', 'error') }
   }
 
+  const handleExport = async () => {
+    try {
+      if (!workspace.path) { notify('Save workspace first', 'error'); return }
+      await api.post('/workspace/load', { path: workspace.path })
+      const resp = await api.post('/workspace/export', {}, { responseType: 'blob' })
+      const blob = new Blob([resp.data], { type: 'application/zip' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${workspace.name}.zip`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      notify('Workspace exported', 'success')
+    } catch (err: any) {
+      notify(err?.response?.data?.detail || 'Export failed', 'error')
+    }
+  }
+
+  const handleMove = async () => {
+    try {
+      if (!workspace.path) { notify('Workspace has no path yet', 'error'); return }
+      const dir = await (window as any).electronAPI?.selectDirectory()
+      if (!dir) return
+      if (!window.confirm(`Move workspace "${workspace.name}" to ${dir}?`)) return
+      const resp = await api.post('/workspace/move', { current_path: workspace.path, new_path: dir })
+      update(workspace.id, { path: resp.data?.path })
+      notify('Workspace moved successfully', 'success')
+    } catch (err: any) {
+      notify(err?.response?.data?.detail || 'Move failed', 'error')
+    }
+  }
+
   const handleSetActive = async () => {
     setActive(workspace.id)
     try {
@@ -307,6 +341,8 @@ export default function WorkspaceConfigPage() {
             height: 26, border: '1px solid', borderColor: draftColor,
           }} />
           <Box sx={{ flex: 1 }} />
+          <Button size="small" variant="outlined" startIcon={<Download sx={{ fontSize: 16 }} />}
+            onClick={handleExport} sx={{ mr: 1 }}>Export</Button>
           {!isActiveWs && (
             <Button size="small" variant="outlined" color="success" startIcon={<CheckCircle sx={{ fontSize: 16 }} />}
               onClick={handleSetActive}>Set as Active</Button>
@@ -356,9 +392,24 @@ export default function WorkspaceConfigPage() {
             </Box>
             <Box>
               <Typography variant="body2" color="text.secondary" sx={{ fontSize: HELPER_FONT, mb: 0.25 }}>Path</Typography>
-              <Typography sx={{ fontSize: INPUT_FONT, fontFamily: 'monospace', color: 'text.secondary' }}>
-                {workspace.path || '(auto-created on first save)'}
-              </Typography>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Typography sx={{ fontSize: INPUT_FONT, fontFamily: 'monospace', color: 'text.secondary' }}>
+                  {workspace.path || '(auto-created on first save)'}
+                </Typography>
+                {workspace.path && (
+                  <>
+                    <IconButton size="small" onClick={() => (window as any).electronAPI?.showItemInFolder(workspace.path)}
+                      sx={{ color: 'text.secondary' }}>
+                      <FolderOpen sx={{ fontSize: 18 }} />
+                    </IconButton>
+                    <Tooltip title="Move workspace to another directory">
+                      <IconButton size="small" onClick={handleMove} sx={{ color: 'text.secondary' }}>
+                        <DriveFileMove sx={{ fontSize: 18 }} />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                )}
+              </Stack>
             </Box>
           </Stack>
         </Box>
@@ -632,7 +683,7 @@ export default function WorkspaceConfigPage() {
       </Box>
 
       {/* Save/Cancel — always visible, save disabled when clean */}
-      <Box sx={{ maxWidth: 800, pl: '184px', py: 1.5, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+      <Box sx={{ py: 1.5, pl: '184px', pr: 3, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
         <Button size="small" onClick={handleCancel} disabled={!isDirty}>Cancel</Button>
         <Button size="small" variant="contained" onClick={handleSave} disabled={!isDirty}>Save</Button>
       </Box>

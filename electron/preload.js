@@ -16,4 +16,5 @@ contextBridge.exposeInMainWorld("electronAPI", {
   },
   installUpdate: () => ipcRenderer.invoke("install-update"),
   checkForUpdates: () => ipcRenderer.invoke("check-for-updates"),
+  showItemInFolder: (path) => ipcRenderer.invoke("show-item-in-folder", path),
 });

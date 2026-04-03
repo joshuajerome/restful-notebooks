@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   alpha, Box, Button, Card, CardContent, Chip, Dialog, DialogActions,
   DialogContent, DialogTitle, IconButton, Stack, TextField, Tooltip, Typography,
 } from '@mui/material'
-import { Add, Edit, FolderOpen } from '@mui/icons-material'
+import { Add, Edit, FolderOpen, Upload } from '@mui/icons-material'
 import { useWorkspaceStore, Workspace, WORKSPACE_COLORS } from '../store/workspaceStore'
 import { useNotificationStore } from '../store/notificationStore'
 import { useThemeStore } from '../store/themeStore'
@@ -33,6 +33,27 @@ export default function WorkspacesPage() {
 
   const handleColorChange = (ws: Workspace, color: string) => {
     update(ws.id, { color })
+  }
+
+  const importInputRef = useRef<HTMLInputElement>(null)
+
+  const handleImport = () => {
+    importInputRef.current?.click()
+  }
+
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    // Reset input so the same file can be re-selected
+    e.target.value = ''
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      await api.post('/workspace/import', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      notify('Workspace imported successfully', 'success')
+    } catch (err: any) {
+      notify(err?.response?.data?.detail || 'Import failed', 'error')
+    }
   }
 
   const handleBrowse = async () => {
@@ -67,6 +88,10 @@ export default function WorkspacesPage() {
           <Button variant={editMode ? 'contained' : 'outlined'} size="small" startIcon={<Edit />}
             onClick={() => setEditMode(!editMode)}>
             {editMode ? 'Done' : 'Edit'}
+          </Button>
+          <Button variant="outlined" size="small" startIcon={<Upload />}
+            onClick={handleImport}>
+            Import
           </Button>
           <Button variant="contained" size="small" startIcon={<Add />}
             onClick={() => { setNewName(''); setNewPath(''); setCreateOpen(true) }}>
@@ -140,6 +165,9 @@ export default function WorkspacesPage() {
           ))}
         </Box>
       )}
+
+      {/* Hidden file input for import */}
+      <input ref={importInputRef} type="file" accept=".zip" hidden onChange={handleImportFile} />
 
       {/* New workspace dialog */}
       <Dialog open={createOpen} onClose={() => setCreateOpen(false)} maxWidth="sm" fullWidth>

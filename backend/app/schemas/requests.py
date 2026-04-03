@@ -8,6 +8,7 @@ class ExecuteRequest(BaseModel):
     endpoint_name: str
     endpoint_path: str
     api_alias: str = ""  # which workspace API to use
+    notebook_name: str = ""
     params: dict[str, str] | None = None
     query: dict[str, Any] | None = None
     payload: Any | None = None

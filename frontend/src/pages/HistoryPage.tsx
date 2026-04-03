@@ -16,20 +16,24 @@ interface HistoryEntry {
   response_status: number
   duration_ms: number
   created_at: string
+  workspace_name?: string
+  notebook_name?: string
 }
 
 export default function HistoryPage() {
   const [history, setHistory] = useState<HistoryEntry[]>([])
-  // TODO: Backend RequestHistory table doesn't have a workspace_id column,
-  // so filtering by workspace is client-side only and currently a no-op.
-  // Once the backend adds workspace_id, switch to server-side filtering.
   const [wsFilter, setWsFilter] = useState<string>('all')
   const navigate = useNavigate()
   const { workspaces } = useWorkspaceStore()
 
   useEffect(() => {
-    api.get('/requests/history?limit=100').then((r) => setHistory(r.data))
-  }, [])
+    const params = new URLSearchParams({ limit: '100' })
+    if (wsFilter !== 'all') {
+      const ws = workspaces.find((w) => w.id === wsFilter)
+      if (ws) params.set('workspace', ws.name)
+    }
+    api.get(`/requests/history?${params.toString()}`).then((r) => setHistory(r.data))
+  }, [wsFilter])
 
   return (
     <Box>
@@ -56,33 +60,50 @@ export default function HistoryPage() {
             <TableRow>
               <TableCell>Method</TableCell>
               <TableCell>Endpoint</TableCell>
+              <TableCell>Workspace</TableCell>
+              <TableCell>Notebook</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Duration</TableCell>
               <TableCell>Time</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {history.map((entry) => (
-              <TableRow key={entry.id} hover sx={{ cursor: 'pointer' }}
-                onClick={() => navigate(`/app/request/${entry.endpoint_name}`)}>
-                <TableCell>
-                  <Chip label={entry.method} size="small"
-                    sx={{ bgcolor: METHOD_COLORS[entry.method] || '#555', color: '#fff', fontWeight: 700, fontSize: 10, height: 20 }} />
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2" fontWeight={600} noWrap>{entry.endpoint_name}</Typography>
-                  <Typography variant="body2" color="text.secondary" noWrap sx={{ fontSize: 11, fontFamily: 'monospace' }}>{entry.endpoint_path}</Typography>
-                </TableCell>
-                <TableCell>
-                  <Chip label={entry.response_status} size="small"
-                    color={entry.response_status >= 200 && entry.response_status < 300 ? 'success' : 'error'} sx={{ fontWeight: 700, fontSize: 11 }} />
-                </TableCell>
-                <TableCell><Typography variant="body2" color="text.secondary">{entry.duration_ms}ms</Typography></TableCell>
-                <TableCell><Typography variant="body2" color="text.secondary" noWrap>{entry.created_at ? new Date(entry.created_at).toLocaleString() : ''}</Typography></TableCell>
-              </TableRow>
-            ))}
+            {history.map((entry) => {
+              const matchedWs = entry.workspace_name ? workspaces.find((w) => w.name === entry.workspace_name) : null
+              const wsColor = matchedWs?.color || '#888'
+              return (
+                <TableRow key={entry.id} hover sx={{ cursor: 'pointer' }}
+                  onClick={() => entry.notebook_name ? navigate('/app/notebooks') : navigate(`/app/request/${entry.endpoint_name}`)}>
+                  <TableCell>
+                    <Chip label={entry.method} size="small"
+                      sx={{ bgcolor: METHOD_COLORS[entry.method] || '#555', color: '#fff', fontWeight: 700, fontSize: 10, height: 20 }} />
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2" fontWeight={600} noWrap>{entry.endpoint_name}</Typography>
+                    <Typography variant="body2" color="text.secondary" noWrap sx={{ fontSize: 11, fontFamily: 'monospace' }}>{entry.endpoint_path}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    {entry.workspace_name ? (
+                      <Chip label={entry.workspace_name} size="small"
+                        sx={{ bgcolor: `${wsColor}22`, color: wsColor, fontWeight: 600, fontSize: 10, height: 20, border: '1px solid', borderColor: wsColor }} />
+                    ) : null}
+                  </TableCell>
+                  <TableCell>
+                    {entry.notebook_name ? (
+                      <Typography variant="body2" color="text.secondary" noWrap sx={{ fontSize: 12 }}>{entry.notebook_name}</Typography>
+                    ) : null}
+                  </TableCell>
+                  <TableCell>
+                    <Chip label={entry.response_status} size="small"
+                      color={entry.response_status >= 200 && entry.response_status < 300 ? 'success' : 'error'} sx={{ fontWeight: 700, fontSize: 11 }} />
+                  </TableCell>
+                  <TableCell><Typography variant="body2" color="text.secondary">{entry.duration_ms}ms</Typography></TableCell>
+                  <TableCell><Typography variant="body2" color="text.secondary" noWrap>{entry.created_at ? new Date(entry.created_at).toLocaleString() : ''}</Typography></TableCell>
+                </TableRow>
+              )
+            })}
             {history.length === 0 && (
-              <TableRow><TableCell colSpan={5} align="center"><Typography color="text.secondary" sx={{ py: 4 }}>No requests yet</Typography></TableCell></TableRow>
+              <TableRow><TableCell colSpan={7} align="center"><Typography color="text.secondary" sx={{ py: 4 }}>No requests yet</Typography></TableCell></TableRow>
             )}
           </TableBody>
         </Table>

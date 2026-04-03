@@ -106,6 +106,8 @@ def execute_request(
         response_status=result["status_code"],
         response_body=json.dumps(result["body"]) if isinstance(result["body"], (dict, list)) else str(result["body"]),
         duration_ms=result["duration_ms"],
+        workspace_name=mgr.config.name if mgr.config else "",
+        notebook_name=body.notebook_name,
     )
     db.add(entry)
     db.commit()
@@ -123,9 +125,12 @@ def execute_request(
 
 
 @router.get("/history")
-def get_history(limit: int = 50, db: Session = Depends(get_db)):
+def get_history(limit: int = 50, workspace: str = "", db: Session = Depends(get_db)):
+    query = db.query(RequestHistory)
+    if workspace:
+        query = query.filter(RequestHistory.workspace_name == workspace)
     entries = (
-        db.query(RequestHistory)
+        query
         .order_by(RequestHistory.created_at.desc())
         .limit(limit)
         .all()
@@ -138,6 +143,8 @@ def get_history(limit: int = 50, db: Session = Depends(get_db)):
             "endpoint_path": e.endpoint_path,
             "response_status": e.response_status,
             "duration_ms": e.duration_ms,
+            "workspace_name": e.workspace_name,
+            "notebook_name": e.notebook_name,
             "created_at": e.created_at.isoformat() if e.created_at else "",
         }
         for e in entries
@@ -164,5 +171,7 @@ def get_history_entry(history_id: str, db: Session = Depends(get_db)):
             else entry.response_body
         ),
         "duration_ms": entry.duration_ms,
+        "workspace_name": entry.workspace_name,
+        "notebook_name": entry.notebook_name,
         "created_at": entry.created_at.isoformat() if entry.created_at else "",
     }

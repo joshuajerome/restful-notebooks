@@ -1,8 +1,11 @@
+import io
 import os
+import zipfile
 from pathlib import Path
 
 import yaml
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from app.dependencies import get_ws
@@ -321,3 +324,98 @@ def delete_variable(key: str, mgr: WorkspaceManager = Depends(get_ws)):
     mgr.variables.delete(key)
     mgr.variables.save()
     return {"ok": True}
+
+
+@router.post("/export")
+def export_workspace(mgr: WorkspaceManager = Depends(get_ws)):
+    """Export the loaded workspace as a ZIP file."""
+    root = mgr.config.root
+    exclude = {"cache.json", "__pycache__"}
+
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        for file in sorted(root.rglob("*")):
+            if file.is_dir():
+                continue
+            rel = file.relative_to(root)
+            parts = set(rel.parts)
+            if parts & exclude or file.suffix == ".pyc":
+                continue
+            zf.write(file, arcname=str(rel))
+
+    buf.seek(0)
+    filename = f"{mgr.config.name}.zip"
+    return StreamingResponse(
+        buf,
+        media_type="application/zip",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@router.post("/import")
+async def import_workspace(file: UploadFile = File(...)):
+    """Import a workspace from a ZIP file."""
+    if not file.filename or not file.filename.endswith(".zip"):
+        raise HTTPException(status_code=400, detail="Must be a .zip file")
+
+    content = await file.read()
+    buf = io.BytesIO(content)
+
+    try:
+        with zipfile.ZipFile(buf, "r") as zf:
+            names = zf.namelist()
+            configs = [n for n in names if n.endswith(".config.yaml")]
+            if not configs:
+                raise HTTPException(status_code=400, detail="ZIP does not contain a *.config.yaml")
+
+            ws_name = configs[0].replace(".config.yaml", "")
+            ws_dir = get_data_dir() / "workspaces"
+            ws_dir.mkdir(parents=True, exist_ok=True)
+            extract_dir = ws_dir / ws_name
+
+            if extract_dir.exists():
+                raise HTTPException(status_code=409, detail=f"Workspace '{ws_name}' already exists")
+
+            extract_dir.mkdir(parents=True)
+            zf.extractall(extract_dir)
+    except zipfile.BadZipFile:
+        raise HTTPException(status_code=400, detail="Invalid ZIP file")
+
+    return {"name": ws_name, "path": str(extract_dir)}
+
+
+class MoveBody(BaseModel):
+    current_path: str
+    new_path: str
+
+
+@router.post("/move")
+def move_workspace(body: MoveBody, request: Request):
+    """Move workspace to a new location."""
+    import shutil
+    mgr: WorkspaceManager = request.app.state.ws
+
+    src = Path(body.current_path)
+    dst = Path(body.new_path) / src.name
+
+    if not src.exists():
+        raise HTTPException(status_code=404, detail=f"Source not found: {src}")
+    if dst.exists():
+        raise HTTPException(status_code=409, detail=f"Destination already exists: {dst}")
+
+    # Unload current workspace if it's the one being moved
+    if mgr.config and str(mgr.config.root) == str(src):
+        mgr.close()
+        mgr.config = None
+        mgr.variables = None
+        mgr.endpoints = []
+        mgr._workspace_path = None
+
+    # Copy then delete
+    shutil.copytree(src, dst)
+    shutil.rmtree(src)
+
+    # Load from new location
+    mgr.load(dst)
+
+    return {"name": dst.name, "path": str(dst)}
