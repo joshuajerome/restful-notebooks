@@ -84,7 +84,7 @@ jobs:
             --noconfirm \
             --distpath ../dist/backend \
             --add-data "../frontend/dist:static" \
-            --collect-all restful \
+            --collect-all restful --collect-all app --hidden-import yaml --hidden-import pydantic --hidden-import sqlalchemy \
             --hidden-import uvloop \
             --hidden-import httptools \
             __main__.py
@@ -139,7 +139,7 @@ jobs:
             --noconfirm `
             --distpath ../dist/backend `
             --add-data "../frontend/dist;static" `
-            --collect-all restful `
+            --collect-all restful --collect-all app --hidden-import yaml --hidden-import pydantic --hidden-import sqlalchemy `
             --hidden-import uvloop `
             --hidden-import httptools `
             __main__.py
@@ -193,7 +193,7 @@ jobs:
             --noconfirm \
             --distpath ../dist/backend \
             --add-data "../frontend/dist:static" \
-            --collect-all restful \
+            --collect-all restful --collect-all app --hidden-import yaml --hidden-import pydantic --hidden-import sqlalchemy \
             --hidden-import uvloop \
             --hidden-import httptools \
             __main__.py

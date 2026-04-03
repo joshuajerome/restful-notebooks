@@ -77,6 +77,11 @@ async function startBackend() {
 
   backendProcess.on("exit", (code) => {
     console.log(`[backend] exited with code ${code}`);
+    if (code !== 0 && code !== null && mainWindow) {
+      mainWindow.webContents.executeJavaScript(
+        `window.postMessage({ type: "error", message: "Backend exited with code ${code}" }, "*")`
+      );
+    }
     backendProcess = null;
   });
 
