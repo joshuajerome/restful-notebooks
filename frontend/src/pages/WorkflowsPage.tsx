@@ -429,12 +429,12 @@ export default function WorkflowsPage() {
     return (
       <Box sx={{ display: 'flex', height: '100%', gap: 2 }}>
         {/* Left Sidebar */}
-        <Box sx={{ width: 200, minWidth: 200, borderRight: 1, borderColor: 'divider', pr: 1, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ width: 200, minWidth: 200, borderRight: 1, borderColor: 'divider', pr: 1, pl: 0, display: 'flex', flexDirection: 'column' }}>
           <TextField size="small" value={editing.name}
             onChange={(e) => setEditing({ ...editing, name: e.target.value })}
             sx={{ mb: 1.5, '& input': { fontSize: 14, fontWeight: 600 } }} />
 
-          <List dense disablePadding sx={{ flex: 1, overflow: 'auto' }}>
+          <List dense disablePadding sx={{ flex: 1, overflow: 'auto', px: 0 }}>
             {editing.blocks.map((block, idx) => (
               <ListItemButton key={block.id}
                 draggable
