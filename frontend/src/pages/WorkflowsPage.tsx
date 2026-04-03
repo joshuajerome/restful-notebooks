@@ -427,9 +427,9 @@ export default function WorkflowsPage() {
   if (editing) {
     const requestCount = editing.blocks.filter((b) => b.type === 'request').length
     return (
-      <Box sx={{ display: 'flex', height: '100%', gap: 2 }}>
+      <Box sx={{ display: 'flex', height: '100%' }}>
         {/* Left Sidebar */}
-        <Box sx={{ width: 200, minWidth: 200, borderRight: 1, borderColor: 'divider', pr: 1, pl: 0, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ width: 200, minWidth: 200, borderRight: 1, borderColor: 'divider', px: 1.5, display: 'flex', flexDirection: 'column' }}>
           <TextField size="small" value={editing.name}
             onChange={(e) => setEditing({ ...editing, name: e.target.value })}
             sx={{ mb: 1.5, '& input': { fontSize: 14, fontWeight: 600 } }} />
@@ -504,7 +504,7 @@ export default function WorkflowsPage() {
         </Box>
 
         {/* Main Area */}
-        <Box sx={{ flex: 1, overflow: 'auto', pb: 4 }}>
+        <Box sx={{ flex: 1, overflow: 'auto', pb: 4, pl: 2 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
             <Box>
               {baseUrl && (
