@@ -199,7 +199,7 @@ export default function RequestBuilderPage() {
             <Chip label={response.status_code || 'ERR'} color={statusColor as any} size="small" sx={{ fontWeight: 700 }} />
             <Typography variant="body2" color="text.secondary" fontSize={12}>{response.duration_ms}ms</Typography>
           </Stack>
-          <ResponseViewer body={response.body} source={`${method} ${endpointName}`} />
+          <ResponseViewer data={response.body} />
         </Box>
       )}
 
