@@ -158,7 +158,12 @@ function RequestBlockEditor({ block, index, endpoints, baseUrl, onUpdate, onDele
         </Box>
 
         <Box sx={{ pt: 1 }}>
-          {tab === 0 && <KeyValueEditor entries={block.params} onChange={(p) => onUpdate({ params: p })} label="param" />}
+          {tab === 0 && (<>
+            <Typography variant="body2" color="text.secondary" sx={{ fontSize: 10, mb: 0.5, fontStyle: 'italic' }}>
+              Keys are labels only — values become positional OData params: /Endpoint(val1,val2)
+            </Typography>
+            <KeyValueEditor entries={block.params} onChange={(p) => onUpdate({ params: p })} label="param" />
+          </>)}
           {tab === 1 && <KeyValueEditor entries={block.query} onChange={(q) => onUpdate({ query: q })} label="query" />}
           {tab === 2 && block.method !== 'GET' && (
             <TextField size="small" fullWidth multiline minRows={3} maxRows={8} placeholder={'{\n    "Name": "{{var_name}}"\n}'}
@@ -293,6 +298,7 @@ export default function WorkflowsPage() {
   const blockRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const [dragIdx, setDragIdx] = useState<number | null>(null)
   const [dropIdx, setDropIdx] = useState<number | null>(null)
+  const [varsDialogOpen, setVarsDialogOpen] = useState(false)
 
   const baseUrl = active?.apis?.[0]?.base_url || ''
 
@@ -483,13 +489,21 @@ export default function WorkflowsPage() {
 
           {/* Runtime variables */}
           {Object.keys(runtimeVars).length > 0 && (
-            <Box sx={{ mt: 1.5, p: 1, bgcolor: 'background.default', borderRadius: 1 }}>
-              <Typography variant="body2" fontWeight={600} sx={{ fontSize: 11, mb: 0.5 }}>Variables</Typography>
-              {Object.entries(runtimeVars).map(([k, v]) => (
+            <Box sx={{ mt: 1.5, p: 1, bgcolor: 'background.default', borderRadius: 1, cursor: 'pointer' }}
+              onClick={() => setVarsDialogOpen(true)}>
+              <Typography variant="body2" fontWeight={600} sx={{ fontSize: 11, mb: 0.5 }}>
+                Variables ({Object.keys(runtimeVars).length})
+              </Typography>
+              {Object.entries(runtimeVars).slice(0, 3).map(([k, v]) => (
                 <Typography key={k} variant="body2" sx={{ fontSize: 10, fontFamily: 'monospace' }} noWrap>
                   {k}: {String(v).slice(0, 20)}{String(v).length > 20 ? '...' : ''}
                 </Typography>
               ))}
+              {Object.keys(runtimeVars).length > 3 && (
+                <Typography variant="body2" sx={{ fontSize: 10, color: 'text.disabled' }}>
+                  +{Object.keys(runtimeVars).length - 3} more...
+                </Typography>
+              )}
             </Box>
           )}
 
@@ -654,6 +668,32 @@ export default function WorkflowsPage() {
         <DialogActions>
           <Button onClick={() => setCreateOpen(false)}>Cancel</Button>
           <Button variant="contained" onClick={handleCreate}>Create</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Variables dialog */}
+      <Dialog open={varsDialogOpen} onClose={() => setVarsDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Runtime Variables</DialogTitle>
+        <DialogContent>
+          {Object.keys(runtimeVars).length === 0 ? (
+            <Typography color="text.secondary" sx={{ fontSize: 13 }}>No variables set. Run a notebook to populate variables.</Typography>
+          ) : (
+            <Box sx={{ fontFamily: 'monospace', fontSize: 13 }}>
+              {Object.entries(runtimeVars).map(([k, v]) => (
+                <Box key={k} sx={{ py: 0.5, borderBottom: 1, borderColor: 'divider' }}>
+                  <Typography component="span" sx={{ fontWeight: 600, color: 'primary.main', fontSize: 13 }}>{k}</Typography>
+                  <Typography component="span" sx={{ color: 'text.secondary', fontSize: 13 }}> = </Typography>
+                  <Typography component="span" sx={{ fontSize: 12, wordBreak: 'break-all' }}>{String(v)}</Typography>
+                </Box>
+              ))}
+            </Box>
+          )}
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 2, fontSize: 11, fontStyle: 'italic' }}>
+            Edit persistent variables in workspace configuration.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setVarsDialogOpen(false)}>Close</Button>
         </DialogActions>
       </Dialog>
     </Box>

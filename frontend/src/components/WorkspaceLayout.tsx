@@ -350,7 +350,7 @@ export default function WorkspaceLayout() {
               </Tooltip>
             )}
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>
-              Restful Notebooks v0.0.3{isDev ? ' DEV' : ''}
+              Restful Notebooks v{__APP_VERSION__}{isDev ? ' DEV' : ''}
             </Typography>
             {isDev && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>

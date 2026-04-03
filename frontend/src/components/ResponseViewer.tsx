@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react'
 import { Box, ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material'
-import { Code, DataObject } from '@mui/icons-material'
+import { Code, DataObject, ExpandLess, ExpandMore } from '@mui/icons-material'
+import { IconButton } from '@mui/material'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -243,15 +244,12 @@ function JsonNode({ value, path, indent, isLast, hoveredPath, onHover, onCopy, h
     }
 
     return (
-      <span
-        style={{ ...hoverStyle(path), ...highlightStyle }}
-        onMouseEnter={(e) => { e.stopPropagation(); onHover(path) }}
-        onMouseLeave={(e) => { e.stopPropagation(); onHover('') }}
-        onClick={(e) => { e.stopPropagation(); onCopy(JSON.stringify(value, null, 2)) }}
-      >
+      <span style={highlightStyle}>
         <span
-          style={{ color: SYN.bracket, cursor: 'pointer', userSelect: 'none' }}
-          onClick={(e) => { e.stopPropagation(); setCollapsed(!collapsed) }}
+          style={{ color: SYN.bracket, userSelect: 'none', ...hoverStyle(path) }}
+          onMouseEnter={(e) => { e.stopPropagation(); onHover(path) }}
+          onMouseLeave={(e) => { e.stopPropagation(); onHover('') }}
+          onClick={(e) => { e.stopPropagation(); onCopy(JSON.stringify(value, null, 2)) }}
         >
           {collapsed ? '▶ ' : '▼ '}[
         </span>
@@ -303,15 +301,12 @@ function JsonNode({ value, path, indent, isLast, hoveredPath, onHover, onCopy, h
     }
 
     return (
-      <span
-        style={{ ...hoverStyle(path), ...highlightStyle }}
-        onMouseEnter={(e) => { e.stopPropagation(); onHover(path) }}
-        onMouseLeave={(e) => { e.stopPropagation(); onHover('') }}
-        onClick={(e) => { e.stopPropagation(); onCopy(JSON.stringify(value, null, 2)) }}
-      >
+      <span style={highlightStyle}>
         <span
-          style={{ color: SYN.bracket, cursor: 'pointer', userSelect: 'none' }}
-          onClick={(e) => { e.stopPropagation(); setCollapsed(!collapsed) }}
+          style={{ color: SYN.bracket, userSelect: 'none', ...hoverStyle(path) }}
+          onMouseEnter={(e) => { e.stopPropagation(); onHover(path) }}
+          onMouseLeave={(e) => { e.stopPropagation(); onHover('') }}
+          onClick={(e) => { e.stopPropagation(); onCopy(JSON.stringify(value, null, 2)) }}
         >
           {collapsed ? '▶ ' : '▼ '}{'{'}
         </span>
@@ -368,7 +363,8 @@ function JsonNode({ value, path, indent, isLast, hoveredPath, onHover, onCopy, h
 // ---------------------------------------------------------------------------
 
 export default function ResponseViewer({ data, maxHeight = 500, highlightPath }: ResponseViewerProps) {
-  const [mode, setMode] = useState<ViewMode>('json')
+  const [mode, setMode] = useState<ViewMode>('text')
+  const [collapsed, setCollapsed] = useState(false)
   const [hoveredPath, setHoveredPath] = useState('')
   const [showCopied, setShowCopied] = useState(false)
 
@@ -389,7 +385,12 @@ export default function ResponseViewer({ data, maxHeight = 500, highlightPath }:
   return (
     <Box sx={{ position: 'relative' }}>
       {/* Mode toggle — top right */}
-      <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 5 }}>
+      <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 5, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        <Tooltip title={collapsed ? 'Expand response' : 'Collapse response'}>
+          <IconButton size="small" onClick={() => setCollapsed((c) => !c)} sx={{ color: '#888' }}>
+            {collapsed ? <ExpandMore sx={{ fontSize: 16 }} /> : <ExpandLess sx={{ fontSize: 16 }} />}
+          </IconButton>
+        </Tooltip>
         <ToggleButtonGroup
           value={mode}
           exclusive
@@ -411,17 +412,17 @@ export default function ResponseViewer({ data, maxHeight = 500, highlightPath }:
             },
           }}
         >
-          <ToggleButton value="json">
-            <Tooltip title="Interactive JSON">
-              <DataObject sx={{ fontSize: 14, mr: 0.5 }} />
-            </Tooltip>
-            JSON
-          </ToggleButton>
           <ToggleButton value="text">
             <Tooltip title="Plain text">
               <Code sx={{ fontSize: 14, mr: 0.5 }} />
             </Tooltip>
             Text
+          </ToggleButton>
+          <ToggleButton value="json">
+            <Tooltip title="Interactive JSON">
+              <DataObject sx={{ fontSize: 14, mr: 0.5 }} />
+            </Tooltip>
+            JSON
           </ToggleButton>
         </ToggleButtonGroup>
       </Box>
@@ -429,7 +430,12 @@ export default function ResponseViewer({ data, maxHeight = 500, highlightPath }:
       {/* Copied flash */}
       <CopiedFlash show={showCopied} />
 
-      {/* Content area */}
+      {/* Content area — collapsible */}
+      {collapsed ? (
+        <Box sx={{ p: 1.5, bgcolor: SYN.bg, borderRadius: 1, border: 1, borderColor: 'divider', color: '#888', fontSize: 12 }}>
+          Response collapsed
+        </Box>
+      ) : (
       <Box
         sx={{
           fontFamily: MONO_FONT,
@@ -464,6 +470,7 @@ export default function ResponseViewer({ data, maxHeight = 500, highlightPath }:
           />
         )}
       </Box>
+      )}
     </Box>
   )
 }
