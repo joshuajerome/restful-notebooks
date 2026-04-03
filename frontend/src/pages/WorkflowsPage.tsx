@@ -76,10 +76,9 @@ function RequestBlockEditor({ block, index, endpoints, baseUrl, onUpdate, onDele
 
   const previewUrl = (() => {
     let url = (baseUrl || '<base_url>') + (block.endpointPath || '')
-    const paramKeys = Object.keys(block.params).filter((k) => k)
-    if (paramKeys.length) {
-      for (const k of paramKeys) url = url.replace(`{${k}}`, block.params[k] || `{${k}}`)
-    }
+    // OData key predicates: append (val1,val2) from param values
+    const paramValues = Object.values(block.params).filter((v) => v)
+    if (paramValues.length) url += `(${paramValues.join(',')})`
     const queryKeys = Object.keys(block.query).filter((k) => k)
     if (queryKeys.length) url += '?' + queryKeys.map((k) => `${k}=${block.query[k]}`).join('&')
     return url
