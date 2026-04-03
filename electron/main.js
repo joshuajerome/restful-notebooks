@@ -31,8 +31,19 @@ async function startBackend() {
     return backendPort;
   }
 
-  // Production: spawn the PyInstaller-built backend binary
-  const port = await findFreePort();
+  // Production: use a consistent port so localStorage persists across restarts.
+  // If the preferred port is busy, fall back to a free one.
+  const PREFERRED_PORT = 17834;
+  let port;
+  try {
+    const net = require("net");
+    await new Promise((resolve, reject) => {
+      const s = net.createServer();
+      s.listen(PREFERRED_PORT, () => { s.close(() => resolve()); });
+      s.on("error", () => resolve("busy"));
+    }).then((r) => { port = r === "busy" ? null : PREFERRED_PORT; });
+  } catch { port = null; }
+  if (!port) port = await findFreePort();
   const userData = app.getPath("userData");
   const binaryName = process.platform === "win32"
     ? "restful-notebooks-server.exe"
