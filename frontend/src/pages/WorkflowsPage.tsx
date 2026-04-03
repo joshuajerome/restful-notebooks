@@ -429,7 +429,7 @@ export default function WorkflowsPage() {
     return (
       <Box sx={{ display: 'flex', height: '100%', ml: -3, mr: -3 }}>
         {/* Left Sidebar */}
-        <Box sx={{ width: 220, minWidth: 220, borderRight: 1, borderColor: 'divider', pl: 3, pr: 1.5, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ width: 210, minWidth: 210, borderRight: 1, borderColor: 'divider', pl: 1.5, pr: 1.5, display: 'flex', flexDirection: 'column' }}>
           <TextField size="small" value={editing.name}
             onChange={(e) => setEditing({ ...editing, name: e.target.value })}
             sx={{ mb: 1.5, '& input': { fontSize: 14, fontWeight: 600 } }} />
