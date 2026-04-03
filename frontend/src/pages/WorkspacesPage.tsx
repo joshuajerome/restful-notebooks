@@ -49,8 +49,10 @@ export default function WorkspacesPage() {
     try {
       const formData = new FormData()
       formData.append('file', file)
-      await api.post('/workspace/import', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-      notify('Workspace imported successfully', 'success')
+      const r = await api.post('/workspace/import', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+      // Add the imported workspace to the store
+      const ws = create(r.data.name, undefined, r.data.path)
+      notify(`Workspace "${r.data.name}" imported`, 'success')
     } catch (err: any) {
       notify(err?.response?.data?.detail || 'Import failed', 'error')
     }
