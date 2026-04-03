@@ -201,13 +201,15 @@ def test_auth(body: TestAuthBody, mgr: WorkspaceManager = Depends(get_ws)):
 
     client = mgr.get_client(body.api_alias)
 
-    # Force auth to refresh by getting headers (triggers login for bearer)
+    # Force auth by getting headers (triggers login for bearer)
     try:
-        if hasattr(client, '_auth') and client._auth and hasattr(client._auth, 'auth_headers'):
-            headers = client._auth.auth_headers()
+        if client.auth and hasattr(client.auth, 'auth_headers'):
+            headers = client.auth.auth_headers()
             if headers:
                 return {"ok": True, "msg": "Authenticated successfully"}
             return {"ok": False, "msg": "No auth headers returned"}
+        if client.auth and hasattr(client.auth, 'invalidate'):
+            return {"ok": True, "msg": "Auth configured (custom strategy)"}
         return {"ok": True, "msg": "No auth configured for this API"}
     except Exception as e:
         raise HTTPException(status_code=401, detail=f"Authentication failed: {e}")
