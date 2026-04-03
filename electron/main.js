@@ -55,9 +55,15 @@ async function startBackend() {
   );
   console.log("[backend] binary path:", backendPath);
 
+  // Set cwd to the backend binary's directory — critical for macOS double-click launch
+  // (double-click launches with cwd=/ and minimal env, Terminal inherits shell env)
+  const backendDir = path.dirname(backendPath);
   backendProcess = spawn(backendPath, [], {
+    cwd: backendDir,
     env: {
       ...process.env,
+      HOME: app.getPath("home"),
+      PATH: process.env.PATH || "/usr/local/bin:/usr/bin:/bin",
       RESTFUL_DESK_PORT: String(port),
       RESTFUL_DESK_DATABASE_URL: `sqlite:///${path.join(userData, "history.db")}`,
     },
