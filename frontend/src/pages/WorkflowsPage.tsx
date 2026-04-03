@@ -427,9 +427,9 @@ export default function WorkflowsPage() {
   if (editing) {
     const requestCount = editing.blocks.filter((b) => b.type === 'request').length
     return (
-      <Box sx={{ display: 'flex', height: '100%' }}>
+      <Box sx={{ display: 'flex', height: '100%', ml: -3, mr: -3 }}>
         {/* Left Sidebar */}
-        <Box sx={{ width: 200, minWidth: 200, borderRight: 1, borderColor: 'divider', px: 1.5, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ width: 220, minWidth: 220, borderRight: 1, borderColor: 'divider', pl: 3, pr: 1.5, display: 'flex', flexDirection: 'column' }}>
           <TextField size="small" value={editing.name}
             onChange={(e) => setEditing({ ...editing, name: e.target.value })}
             sx={{ mb: 1.5, '& input': { fontSize: 14, fontWeight: 600 } }} />
