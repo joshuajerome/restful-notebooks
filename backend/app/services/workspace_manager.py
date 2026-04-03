@@ -34,20 +34,22 @@ def _camel_to_display(name: str) -> str:
     return result.strip()
 
 
-def _build_client(api) -> Client:
+def _build_client(api, runtime_secrets: dict | None = None) -> Client:
     """Build a Client from an ApiConnection config."""
     base_url = api.base_url
     auth = None
+    secrets = runtime_secrets or {}
 
     if api.auth.type == "bearer":
-        password = os.environ.get(api.auth.password_env, "") if api.auth.password_env else ""
+        # Try: runtime secret → env var → empty
+        password = secrets.get("password") or (os.environ.get(api.auth.password_env, "") if api.auth.password_env else "")
         auth = BearerAuth(
             base_url=base_url,
             login_path=api.auth.login_path,
             payload={"username": api.auth.username, "password": password},
         )
     elif api.auth.type == "apikey":
-        key = os.environ.get(api.auth.key_env, "") if api.auth.key_env else ""
+        key = secrets.get("api_key") or (os.environ.get(api.auth.key_env, "") if api.auth.key_env else "")
         if key:
 
             class ApiKeyAuth:
@@ -105,6 +107,11 @@ class WorkspaceManager:
         self.clients: dict[str, Client] = {}
         self.endpoints: list[EndpointInfo] = []
         self._workspace_path: Path | None = None
+        self._runtime_secrets: dict[str, dict] = {}  # alias → {password: ..., api_key: ...}
+
+    def set_secrets(self, alias: str, secrets: dict) -> None:
+        """Store runtime secrets (not persisted to disk)."""
+        self._runtime_secrets[alias] = secrets
 
     def load(self, start: Path | None = None) -> None:
         """Discover workspace, build clients, and load endpoints."""
@@ -126,7 +133,7 @@ class WorkspaceManager:
         # Build a Client per API
         self.clients = {}
         for api in self.config.apis:
-            self.clients[api.alias] = _build_client(api)
+            self.clients[api.alias] = _build_client(api, self._runtime_secrets.get(api.alias))
 
         # Load endpoints from each API's endpoints.py
         from restful.workspace.config import _sanitize_name

@@ -151,6 +151,7 @@ export default function WorkspaceConfigPage() {
     base_url: a.base_url, plugin_path: a.plugin_path,
     auth: {
       type: a.auth_type, login_path: a.login_path || '', username: a.username || '',
+      password: a.credential_mode === 'manual' ? a.password : '',
       password_env: a.credential_mode === 'env' ? a.password_env : '',
       header: a.api_key_header || 'X-API-Key',
       key_env: a.credential_mode === 'env' ? a.api_key_env : '',

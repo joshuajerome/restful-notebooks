@@ -50,7 +50,8 @@ class AuthConfigBody(BaseModel):
     type: str = "none"
     login_path: str = ""
     username: str = ""
-    password_env: str = ""
+    password: str = ""      # direct password (manual mode)
+    password_env: str = ""  # env var name (env mode)
     header: str = "X-API-Key"
     key_env: str = ""
 
@@ -284,6 +285,17 @@ def create_workspace_route(body: CreateBody, request: Request):
 @router.post("/save-config", response_model=WorkspaceInfo)
 def save_config(body: SaveConfigBody, mgr: WorkspaceManager = Depends(get_ws)):
     """Write API configs to the workspace config.yaml and reload."""
+    # Store runtime secrets (passwords/keys not written to YAML)
+    for api_body in body.apis:
+        alias = api_body.alias or api_body.name.strip().lower().replace(" ", "_").replace("-", "_")
+        secrets: dict = {}
+        if api_body.auth.password:
+            secrets["password"] = api_body.auth.password
+        if hasattr(api_body.auth, 'api_key') and getattr(api_body.auth, 'api_key', ''):
+            secrets["api_key"] = api_body.auth.api_key
+        if secrets:
+            mgr.set_secrets(alias, secrets)
+
     _write_config_yaml(mgr.config.config_path, mgr.config.name, body.apis)
     mgr.reload()
     return _build_workspace_info(mgr)
