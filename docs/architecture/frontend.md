@@ -10,7 +10,7 @@ React 18 + MUI v6 + Zustand. All state management is client-side via Zustand sto
 | Request Builder | `/app/request/:endpointName?` | Method + endpoint autocomplete, params/query/payload tabs, response viewer |
 | Endpoint Browser | `/app/endpoints` | Searchable endpoint catalog with method pills and group filter |
 | Workspaces Config | `/app/workspaces` | Split view: workspace list + config panel (APIs, variables) |
-| Workflows | `/app/workflows` | Canvas view (card grid) + editor view (step builder with data extraction) |
+| Notebooks | `/app/notebooks` | Canvas view (card grid) + editor view (block-based builder with request/extract/variable blocks) |
 | History | `/app/history` | Request history table with method/status chips |
 | Audit Log | `/app/audit` | Chronological event log (workspace, API, request events) |
 | Settings | `/app/settings` | General info + plugin management |
@@ -23,7 +23,7 @@ React 18 + MUI v6 + Zustand. All state management is client-side via Zustand sto
 | `requestStore` | localStorage (per-workspace) | Request state, session switching, execute |
 | `endpointStore` | none (fetches from backend) | Endpoint catalog, search, filter |
 | `variableStore` | none (fetches from backend) | Workspace variable CRUD |
-| `workflowStore` | localStorage | Workflow CRUD, step management, extract modes |
+| `notebookStore` | localStorage | Notebook CRUD, block management (request/extract/variable), extract modes |
 | `auditStore` | localStorage | Event log (last 500 entries) |
 | `notificationStore` | memory | Toast notification queue |
 | `navStore` | memory | Browser-style back/forward history |

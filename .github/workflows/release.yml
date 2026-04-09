@@ -20,11 +20,11 @@ jobs:
 
       - name: Install backend dependencies
         working-directory: backend
-        run: uv sync --no-sources
+        run: uv sync --no-sources --group dev
 
-      - name: Verify backend imports
+      - name: Run backend tests
         working-directory: backend
-        run: uv run --no-sources python -c "from app.main import app; print('Backend import OK')"
+        run: uv run --no-sources pytest tests/ -v --tb=short
 
   frontend-checks:
     name: Frontend Type Check

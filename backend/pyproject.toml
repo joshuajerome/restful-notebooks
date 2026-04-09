@@ -26,6 +26,7 @@ dev = [
     "ty>=0.0.1a0",
     "pyinstaller>=6.0",
     "pytest>=8.0",
+    "httpx>=0.28",
 ]
 
 [tool.ruff]

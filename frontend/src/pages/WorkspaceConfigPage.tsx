@@ -376,10 +376,19 @@ export default function WorkspaceConfigPage() {
         <Box sx={{ p: 2.5 }}>
           <Typography variant="h6" sx={{ mb: 2, fontSize: 16 }}>Workspace Info</Typography>
           <Stack spacing={2}>
-            <TextField size="small" label="Name" value={draftName}
-              onChange={(e) => setDraftName(e.target.value)} fullWidth
-              inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }} />
-            <Box>
+            <Stack direction="row" spacing={1} alignItems="flex-start">
+              {draftName !== workspace.name
+                ? <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#E57C23', flexShrink: 0, mt: 1 }} />
+                : <Box sx={{ width: 6, flexShrink: 0 }} />}
+              <TextField size="small" label="Name" value={draftName}
+                onChange={(e) => setDraftName(e.target.value)} fullWidth
+                inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }} />
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="flex-start">
+              {draftColor !== workspace.color
+                ? <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#E57C23', flexShrink: 0, mt: 0.5 }} />
+                : <Box sx={{ width: 6, flexShrink: 0 }} />}
+              <Box>
               <Typography variant="body2" color="text.secondary" sx={{ fontSize: HELPER_FONT, mb: 0.75 }}>Color</Typography>
               <Stack direction="row" spacing={0.75}>
                 {WORKSPACE_COLORS.filter((c) => c !== tempWorkspaceColor).map((c) => (
@@ -390,6 +399,7 @@ export default function WorkspaceConfigPage() {
                 ))}
               </Stack>
             </Box>
+            </Stack>
             <Box>
               <Typography variant="body2" color="text.secondary" sx={{ fontSize: HELPER_FONT, mb: 0.25 }}>Path</Typography>
               <Stack direction="row" alignItems="center" spacing={1}>
@@ -489,7 +499,7 @@ export default function WorkspaceConfigPage() {
                       {dot('source_file')}
                       <TextField size="small" label="Source File" value={cfg.source_file} onChange={(e) => updateDraftApi(idx, { source_file: e.target.value })}
                         fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
-                        sx={cfg.source_file ? { '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#38A169' } } } : {}}
+                        sx={cfg.source_file ? { '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: 'rgba(56,161,105,0.45)' } } } : {}}
                         helperText="File the plugin parses to generate endpoints" FormHelperTextProps={{ sx: { fontSize: HELPER_FONT } }} />
                       <IconButton size="small" onClick={() => handleBrowseFile(idx)} sx={{ mt: 0.5 }}><FolderOpen sx={{ fontSize: 20 }} /></IconButton>
                     </Stack>
@@ -497,7 +507,7 @@ export default function WorkspaceConfigPage() {
                       {dot('plugin_path')}
                       <TextField size="small" label="Plugin Path" value={cfg.plugin_path} onChange={(e) => updateDraftApi(idx, { plugin_path: e.target.value })}
                         fullWidth inputProps={{ style: { fontSize: INPUT_FONT } }} InputLabelProps={{ sx: { fontSize: LABEL_FONT } }}
-                        sx={cfg.plugin_path ? { '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#38A169' } } } : {}}
+                        sx={cfg.plugin_path ? { '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: 'rgba(56,161,105,0.45)' } } } : {}}
                         helperText="Directory containing plugin.yaml + adapter.py" FormHelperTextProps={{ sx: { fontSize: HELPER_FONT } }} />
                       <IconButton size="small" onClick={() => handleBrowsePluginPath(idx)} sx={{ mt: 0.5 }}><FolderOpen sx={{ fontSize: 20 }} /></IconButton>
                     </Stack>
