@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import {
-  Box, Typography, Stack, Button, IconButton, Tooltip, Paper,
+  Box, Chip, Typography, Stack, Button, IconButton, Tooltip, Paper,
   CircularProgress, Alert, TextField, InputAdornment,
 } from '@mui/material'
 import { Download, FolderOpen, Refresh, Search, PlaylistPlay } from '@mui/icons-material'
@@ -55,9 +55,27 @@ export default function ObservabilityPage() {
     }
   }, [lines, autoScroll])
 
-  const filteredLines = filter
-    ? lines.filter((l) => l.toLowerCase().includes(filter.toLowerCase()))
-    : lines
+  const [levelFilter, setLevelFilter] = useState<Set<string>>(new Set(['ERROR', 'WARNING', 'INFO', 'DEBUG']))
+
+  const toggleLevel = (level: string) => {
+    setLevelFilter((prev) => {
+      const next = new Set(prev)
+      if (next.has(level)) next.delete(level)
+      else next.add(level)
+      return next
+    })
+  }
+
+  const getLineLevel = (line: string): string => {
+    if (/\bERROR\b/i.test(line)) return 'ERROR'
+    if (/\bWARNING\b/i.test(line)) return 'WARNING'
+    if (/\bDEBUG\b/i.test(line)) return 'DEBUG'
+    return 'INFO'
+  }
+
+  const filteredLines = lines
+    .filter((l) => levelFilter.has(getLineLevel(l)))
+    .filter((l) => !filter || l.toLowerCase().includes(filter.toLowerCase()))
 
   const handleDownload = () => {
     const blob = new Blob([filteredLines.join('\n')], { type: 'text/plain' })
@@ -117,6 +135,23 @@ export default function ObservabilityPage() {
             },
           }}
         />
+        {/* Level filters */}
+        {(['ERROR', 'WARNING', 'INFO', 'DEBUG'] as const).map((level) => {
+          const colors: Record<string, string> = { ERROR: '#F44336', WARNING: '#FF9800', INFO: '#2196F3', DEBUG: '#9E9E9E' }
+          const active = levelFilter.has(level)
+          return (
+            <Chip key={level} label={level} size="small" onClick={() => toggleLevel(level)}
+              sx={{
+                fontSize: 10, height: 22, fontWeight: 700,
+                bgcolor: active ? colors[level] + '33' : 'transparent',
+                color: active ? colors[level] : '#555',
+                border: '1px solid',
+                borderColor: active ? colors[level] : 'divider',
+                cursor: 'pointer',
+              }} />
+          )
+        })}
+
         <Tooltip title={autoScroll ? 'Auto-scroll ON' : 'Auto-scroll OFF'}>
           <IconButton
             onClick={() => setAutoScroll((v) => !v)}
