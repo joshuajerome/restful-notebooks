@@ -98,10 +98,16 @@ app.include_router(plugins.router)
 @app.get("/api/health")
 def health():
     mgr: WorkspaceManager = app.state.ws
+    try:
+        from importlib.metadata import version as pkg_version
+        sdk_version = pkg_version("restful-sdk")
+    except Exception:
+        sdk_version = "unknown"
     return {
         "status": "ok",
         "workspace": mgr.config.name if mgr.config else None,
         "workspace_root": str(mgr.config.root) if mgr.config else None,
+        "sdk_version": sdk_version,
     }
 
 

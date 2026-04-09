@@ -38,6 +38,7 @@ export default function WorkspaceLayout() {
 
   const [backendConnected, setBackendConnected] = useState(false)
   const [backendWorkspace, setBackendWorkspace] = useState<string | null>(null)
+  const [sdkVersion, setSdkVersion] = useState('...')
   const [isDev, setIsDev] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [updateAvailable, setUpdateAvailable] = useState<string | null>(null)
@@ -92,6 +93,7 @@ export default function WorkspaceLayout() {
         const data = await r.json()
         setBackendConnected(true)
         setBackendWorkspace(data.workspace || null)
+        if (data.sdk_version) setSdkVersion(data.sdk_version)
       } else {
         setBackendConnected(false)
       }
@@ -330,7 +332,7 @@ export default function WorkspaceLayout() {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: backendConnected ? 'success.main' : 'error.main' }} />
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>
-              restful-sdk v0.0.1
+              restful-sdk v{sdkVersion}
             </Typography>
           </Box>
 
