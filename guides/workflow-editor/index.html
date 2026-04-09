@@ -79,7 +79,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#workflow-editor" class="md-skip">
+        <a href="#notebook-editor" class="md-skip">
           Skip to content
         </a>
       
@@ -876,6 +876,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#block-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Block Types
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#editor-view" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -899,10 +910,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-editor" class="md-nav__link">
+  <a href="#request-block-editor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step Editor
+        Request Block Editor
       
     </span>
   </a>
@@ -910,10 +921,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#data-extraction" class="md-nav__link">
+  <a href="#extract-block-editor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Data Extraction
+        Extract Block Editor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-block-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variable Block Editor
       
     </span>
   </a>
@@ -1204,6 +1226,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#block-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Block Types
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#editor-view" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1227,10 +1260,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-editor" class="md-nav__link">
+  <a href="#request-block-editor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step Editor
+        Request Block Editor
       
     </span>
   </a>
@@ -1238,10 +1271,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#data-extraction" class="md-nav__link">
+  <a href="#extract-block-editor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Data Extraction
+        Extract Block Editor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-block-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variable Block Editor
       
     </span>
   </a>
@@ -1300,31 +1344,56 @@
   
 
 
-<h1 id="workflow-editor">Workflow Editor<a class="headerlink" href="#workflow-editor" title="Permanent link">&para;</a></h1>
-<p>The Workflows page provides a visual builder for multi-step REST workflows.</p>
+<h1 id="notebook-editor">Notebook Editor<a class="headerlink" href="#notebook-editor" title="Permanent link">&para;</a></h1>
+<p>The Notebooks page provides a visual builder for block-based REST notebooks.</p>
 <h2 id="canvas-view">Canvas View<a class="headerlink" href="#canvas-view" title="Permanent link">&para;</a></h2>
-<p>The default view shows all workflows as cards in a grid. Each card displays:
-- Workflow name
-- Step count
-- Method chips for each step</p>
+<p>The default view shows all notebooks as cards in a grid. Each card displays:
+- Notebook name
+- Block count
+- Method chips for request blocks</p>
 <p>Actions: Create, Edit, Duplicate, Delete (via right-click menu).</p>
+<h2 id="block-types">Block Types<a class="headerlink" href="#block-types" title="Permanent link">&para;</a></h2>
+<p>Notebooks are composed of three block types:</p>
+<table>
+<thead>
+<tr>
+<th>Block</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Request</strong></td>
+<td>An HTTP request (method, endpoint, params, query, payload). The primary building block.</td>
+</tr>
+<tr>
+<td><strong>Extract</strong></td>
+<td>Extracts data from the previous response and saves it as a notebook variable. Supports reference paths (<code>response["items"][0]["id"]</code>) or custom Python functions.</td>
+</tr>
+<tr>
+<td><strong>Variable</strong></td>
+<td>Sets a notebook variable to a static value or expression. Useful for constants or computed values shared across blocks.</td>
+</tr>
+</tbody>
+</table>
+<p>Blocks execute sequentially from top to bottom. Variable templates (<code>{{varName}}</code>) are resolved in any block field before execution.</p>
 <h2 id="editor-view">Editor View<a class="headerlink" href="#editor-view" title="Permanent link">&para;</a></h2>
-<p>Click <strong>Edit</strong> on a workflow to open the step-by-step editor.</p>
+<p>Click <strong>Edit</strong> on a notebook to open the block-based editor.</p>
 <h3 id="left-sidebar">Left Sidebar<a class="headerlink" href="#left-sidebar" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Workflow name</li>
-<li>Step list with method chips and response indicators</li>
-<li>Add Step button</li>
-<li>Workflow variables display</li>
+<li>Notebook name</li>
+<li>Block list with type indicators and method chips (for request blocks)</li>
+<li>Add Block button (choose Request, Extract, or Variable)</li>
+<li>Notebook variables display</li>
 </ul>
-<h3 id="step-editor">Step Editor<a class="headerlink" href="#step-editor" title="Permanent link">&para;</a></h3>
-<p>Each step has:
-- <strong>Description</strong> — what the step does
+<h3 id="request-block-editor">Request Block Editor<a class="headerlink" href="#request-block-editor" title="Permanent link">&para;</a></h3>
+<p>Each request block has:
+- <strong>Description</strong> — what the block does
 - <strong>Method</strong> — HTTP method dropdown
 - <strong>Endpoint</strong> — autocomplete selector
-- <strong>Tabs</strong>: Params, Query, Payload, Extract Data</p>
-<h3 id="data-extraction">Data Extraction<a class="headerlink" href="#data-extraction" title="Permanent link">&para;</a></h3>
-<p>After the first step, each step can extract data from the previous response:</p>
+- <strong>Tabs</strong>: Params, Query, Payload</p>
+<h3 id="extract-block-editor">Extract Block Editor<a class="headerlink" href="#extract-block-editor" title="Permanent link">&para;</a></h3>
+<p>Configure data extraction from the previous response:</p>
 <table>
 <thead>
 <tr>
@@ -1333,10 +1402,6 @@
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>None</td>
-<td>No extraction</td>
-</tr>
 <tr>
 <td>Reference</td>
 <td>Path like <code>response["items"][0]["id"]</code> — parsed safely, no eval</td>
@@ -1347,15 +1412,17 @@
 </tr>
 </tbody>
 </table>
-<p>Extracted values are saved as workflow variables and can be used in subsequent steps via <code>{{variableName}}</code> templates in params, query, or payload.</p>
+<p>Extracted values are saved as notebook variables and can be used in subsequent blocks via <code>{{variableName}}</code> templates.</p>
+<h3 id="variable-block-editor">Variable Block Editor<a class="headerlink" href="#variable-block-editor" title="Permanent link">&para;</a></h3>
+<p>Set a variable name and value directly. The value can contain <code>{{varName}}</code> templates referencing other variables.</p>
 <h3 id="comment-out">Comment Out<a class="headerlink" href="#comment-out" title="Permanent link">&para;</a></h3>
-<p>Toggle a step as "commented" to skip it during execution without deleting it. Commented steps appear grayed out.</p>
+<p>Toggle a block as "commented" to skip it during execution without deleting it. Commented blocks appear grayed out.</p>
 <h2 id="execution">Execution<a class="headerlink" href="#execution" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Run Step</strong> — execute a single step</li>
-<li><strong>Run All</strong> — execute all non-commented steps sequentially</li>
+<li><strong>Run Block</strong> — execute a single block</li>
+<li><strong>Run All</strong> — execute all non-commented blocks sequentially</li>
 <li>Variable templates (<code>{{varName}}</code>) are resolved before execution</li>
-<li>Results appear in the response viewer for each step</li>
+<li>Results appear in the response viewer for each request block</li>
 </ul>
 
 
