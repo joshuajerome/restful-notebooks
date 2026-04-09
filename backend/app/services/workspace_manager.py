@@ -110,14 +110,48 @@ class WorkspaceManager:
         self._runtime_secrets: dict[str, dict] = {}  # alias → {password: ..., api_key: ...}
 
     def set_secrets(self, alias: str, secrets: dict) -> None:
-        """Store runtime secrets (not persisted to disk)."""
+        """Store runtime secrets and persist to .restful/secrets.json."""
         self._runtime_secrets[alias] = secrets
+        if self.config:
+            self._save_secrets()
+
+    def _save_secrets(self) -> None:
+        """Persist secrets to .restful/secrets.json (0600 permissions)."""
+        if not self.config:
+            return
+        secrets_dir = self.config.root / ".restful"
+        secrets_dir.mkdir(parents=True, exist_ok=True)
+        secrets_path = secrets_dir / "secrets.json"
+        import json
+        import tempfile
+        tmp = secrets_path.with_suffix(".tmp")
+        with tmp.open("w", encoding="utf-8") as f:
+            json.dump(self._runtime_secrets, f, indent=2)
+        os.replace(tmp, secrets_path)
+        try:
+            os.chmod(secrets_path, 0o600)
+        except OSError:
+            pass
+
+    def _load_secrets(self) -> None:
+        """Load secrets from .restful/secrets.json if it exists."""
+        if not self.config:
+            return
+        secrets_path = self.config.root / ".restful" / "secrets.json"
+        if secrets_path.exists():
+            import json
+            try:
+                with secrets_path.open("r", encoding="utf-8") as f:
+                    self._runtime_secrets = json.load(f)
+            except (json.JSONDecodeError, OSError):
+                self._runtime_secrets = {}
 
     def load(self, start: Path | None = None) -> None:
         """Discover workspace, build clients, and load endpoints."""
         self.config = load_workspace(start)
         self._workspace_path = self.config.root
         self.variables = VariableStore(self.config.root)
+        self._load_secrets()
 
         # Load plugins from API plugin_path entries
         for api in self.config.apis:
