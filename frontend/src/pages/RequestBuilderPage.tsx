@@ -100,7 +100,10 @@ export default function RequestBuilderPage() {
   const { fetchVariables } = useVariableStore()
   const { active } = useWorkspaceStore()
   const [tab, setTab] = useState(0)
-  const baseUrl = active?.apis?.[0]?.base_url || ''
+  const [selectedAlias, setSelectedAlias] = useState('')
+  const apis = active?.apis || []
+  const currentApi = apis.find((a) => a.alias === selectedAlias) || apis[0]
+  const baseUrl = currentApi?.base_url || ''
 
   useEffect(() => { fetchEndpoints(); fetchVariables() }, [])
 
@@ -143,6 +146,20 @@ export default function RequestBuilderPage() {
           </Select>
         </FormControl>
 
+        {apis.length > 1 && (
+          <FormControl size="small" sx={{ minWidth: 100 }}>
+            <Select value={selectedAlias || (currentApi?.alias || '')}
+              onChange={(e) => setSelectedAlias(e.target.value)}
+              sx={{ fontSize: 12 }}>
+              {apis.map((a) => (
+                <MenuItem key={a.alias || a.name} value={a.alias || a.name} sx={{ fontSize: 12 }}>
+                  {a.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+
         <Autocomplete size="small" sx={{ flex: 1 }} options={endpoints} value={selectedEp}
           onChange={(_, ep) => { if (ep) { setEndpoint(ep.name, ep.path); if (ep.methods.length === 1) setMethod(ep.methods[0]) } }}
           getOptionLabel={(ep) => ep.display_name || ep.name}
@@ -171,7 +188,7 @@ export default function RequestBuilderPage() {
           renderInput={(p) => <TextField {...p} placeholder="Search or select endpoint..." />}
         />
 
-        <Button variant="contained" onClick={() => execute(active?.apis?.[0]?.alias)} disabled={loading || !endpointName}
+        <Button variant="contained" onClick={() => execute(currentApi?.alias)} disabled={loading || !endpointName}
           startIcon={loading ? <CircularProgress size={16} /> : <Send />}>Send</Button>
       </Stack>
 

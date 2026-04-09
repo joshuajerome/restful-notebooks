@@ -183,9 +183,10 @@ function RequestBlockEditor({ block, index, endpoints, baseUrl, onUpdate, onDele
   )
 }
 
-function ExtractBlockEditor({ block, blocks, onUpdate, onDelete }: {
+function ExtractBlockEditor({ block, blocks, onUpdate, onDelete, onRun }: {
   block: ExtractBlock; blocks: NotebookBlock[]
   onUpdate: (patch: Partial<ExtractBlock>) => void; onDelete: () => void
+  onRun: () => void
 }) {
   const inputBlock = blocks.find((b) => b.id === block.inputBlockId)
   const warnings = validateDependencies(blocks)
@@ -197,7 +198,16 @@ function ExtractBlockEditor({ block, blocks, onUpdate, onDelete }: {
     <Card variant="outlined" sx={{ mb: 2, borderColor: warning ? 'warning.main' : 'divider' }}>
       <CardContent>
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
-          <Chip label="extract" size="small" sx={{ bgcolor: '#805AD5', color: '#fff', fontWeight: 700, fontSize: 11 }} />
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Chip label="extract" size="small" sx={{ bgcolor: '#805AD5', color: '#fff', fontWeight: 700, fontSize: 11 }} />
+            {inputResponse && (
+              <Tooltip title="Run extraction using cached response">
+                <IconButton size="small" onClick={onRun} sx={{ color: 'primary.main' }}>
+                  <PlayArrow sx={{ fontSize: 16 }} />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Stack>
           <IconButton size="small" color="error" onClick={onDelete}><Delete sx={{ fontSize: 16 }} /></IconButton>
         </Stack>
 
@@ -554,6 +564,21 @@ export default function WorkflowsPage() {
                     block={block as ExtractBlock} blocks={editing.blocks}
                     onUpdate={(patch) => updateBlock(block.id, patch)}
                     onDelete={() => removeBlock(block.id)}
+                    onRun={() => {
+                      const ext = block as ExtractBlock
+                      const input = editing.blocks.find((b) => b.id === ext.inputBlockId)
+                      if (input?.type === 'request' && (input as RequestBlock).response) {
+                        const val = resolveJsonPath((input as RequestBlock).response, ext.referencePath)
+                        if (val !== undefined && ext.variableName) {
+                          setRuntimeVars((v) => ({ ...v, [ext.variableName]: typeof val === 'string' ? val : JSON.stringify(val) }))
+                          notify(`Extracted ${ext.variableName}`, 'success')
+                        } else {
+                          notify('Could not resolve path or missing variable name', 'error')
+                        }
+                      } else {
+                        notify('No cached response from input block — run the request first', 'error')
+                      }
+                    }}
                   />
                 )}
                 {block.type === 'variable' && (
