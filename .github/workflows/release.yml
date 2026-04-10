@@ -105,10 +105,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: restful-notebooks-macos
-          path: |
-            src-tauri/target/release/bundle/dmg/*.dmg
-            src-tauri/target/release/bundle/macos/*.app.tar.gz
-            src-tauri/target/release/bundle/macos/*.app.tar.gz.sig
+          path: src-tauri/target/release/bundle/**/*
 
   build-windows:
     name: Build Windows App
@@ -169,10 +166,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: restful-notebooks-windows
-          path: |
-            src-tauri/target/release/bundle/nsis/*.exe
-            src-tauri/target/release/bundle/nsis/*.nsis.zip
-            src-tauri/target/release/bundle/nsis/*.nsis.zip.sig
+          path: src-tauri/target/release/bundle/**/*
 
   build-linux:
     name: Build Linux App
@@ -237,11 +231,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: restful-notebooks-linux
-          path: |
-            src-tauri/target/release/bundle/appimage/*.AppImage
-            src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz
-            src-tauri/target/release/bundle/appimage/*.AppImage.tar.gz.sig
-            src-tauri/target/release/bundle/deb/*.deb
+          path: src-tauri/target/release/bundle/**/*
 
   # ── GitHub Release ──────────────────────────────────────────────────────────
   release:
@@ -274,7 +264,4 @@ jobs:
           tag_name: ${{ steps.version.outputs.tag }}
           name: Restful Notebooks ${{ steps.version.outputs.tag }}
           generate_release_notes: true
-          files: |
-            release-assets/restful-notebooks-macos/*
-            release-assets/restful-notebooks-windows/*
-            release-assets/restful-notebooks-linux/*
+          files: release-assets/**/*
