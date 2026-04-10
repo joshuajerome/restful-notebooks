@@ -103,6 +103,32 @@ jobs:
         working-directory: frontend
         run: npx tsc --noEmit
 
+  # ── Rust Check ──────────────────────────────────────────────────────────────
+  rust-check:
+    name: Rust Check (Tauri)
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Create placeholder sidecar
+        run: |
+          TRIPLE=$(rustc -Vv | grep host | cut -d' ' -f2)
+          touch src-tauri/binaries/restful-notebooks-server-${TRIPLE}
+          chmod +x src-tauri/binaries/restful-notebooks-server-${TRIPLE}
+
+      - name: Cargo check
+        working-directory: src-tauri
+        run: cargo check
+
   # ── Docs Build ──────────────────────────────────────────────────────────────
   docs-build:
     name: Docs Build

@@ -10,3 +10,8 @@ build/
 uv.lock
 frontend/node_modules/
 plugins/
+
+# Tauri
+src-tauri/target/
+src-tauri/binaries/restful-notebooks-server-*
+src-tauri/binaries/sidecar-build/

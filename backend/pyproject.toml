@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-restful-sdk = { path = "../../post-it", editable = true }
+restful-sdk = { path = "../../restful-sdk", editable = true }
 
 [dependency-groups]
 dev = [

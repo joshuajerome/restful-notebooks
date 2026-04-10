@@ -3,12 +3,12 @@ import react from '@vitejs/plugin-react'
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 
-const electronPkg = JSON.parse(readFileSync(resolve(__dirname, '../electron/package.json'), 'utf-8'))
+const tauriConf = JSON.parse(readFileSync(resolve(__dirname, '../src-tauri/tauri.conf.json'), 'utf-8'))
 
 export default defineConfig({
   plugins: [react()],
   define: {
-    __APP_VERSION__: JSON.stringify(electronPkg.version),
+    __APP_VERSION__: JSON.stringify(tauriConf.version || '0.2.0'),
   },
   server: {
     host: '0.0.0.0',
@@ -20,4 +20,5 @@ export default defineConfig({
       },
     },
   },
+  clearScreen: false,
 })
