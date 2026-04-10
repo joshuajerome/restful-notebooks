@@ -90,6 +90,10 @@ jobs:
           cp ../src-tauri/binaries/sidecar-build/restful-notebooks-server/restful-notebooks-server \
              ../src-tauri/binaries/restful-notebooks-server-${TRIPLE}
 
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
       - name: Build Tauri app
         working-directory: src-tauri
         run: cargo tauri build
@@ -149,6 +153,10 @@ jobs:
             __main__.py
           cp ../src-tauri/binaries/sidecar-build/restful-notebooks-server/restful-notebooks-server.exe \
              "../src-tauri/binaries/restful-notebooks-server-${TRIPLE}.exe"
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
 
       - name: Build Tauri app
         working-directory: src-tauri
@@ -213,6 +221,10 @@ jobs:
             __main__.py
           cp ../src-tauri/binaries/sidecar-build/restful-notebooks-server/restful-notebooks-server \
              ../src-tauri/binaries/restful-notebooks-server-${TRIPLE}
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
 
       - name: Build Tauri app
         working-directory: src-tauri
